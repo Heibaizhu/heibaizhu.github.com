@@ -20,18 +20,17 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Open3D提供了三种数据结构：  点云 (point cloud) 网格 (mesh) RGB-D图像  点云点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息$[x, y, z] \in R^3$，法线$[n_x, n_y, n_z] \in R^3$，颜色$[r, g, b] \in R^3$，强度$i \in R$。 读写12345import open3d as o3d i">
+  <meta name="description" content="点云     网格     RGB-D图像       Open3D提供了三种数据结构：  点云 (point cloud) 网格 (mesh) RGB-D图像  点云 点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息\([x, y, z] \in R^3\)，法线\([n_x, n_y, n_z] \in R^3\)，颜色\([r, g, b] \in R^3">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OPEN3D_IO">
 <meta property="og:url" content="http://example.com/2023/05/31/open3d_io/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Open3D提供了三种数据结构：  点云 (point cloud) 网格 (mesh) RGB-D图像  点云点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息$[x, y, z] \in R^3$，法线$[n_x, n_y, n_z] \in R^3$，颜色$[r, g, b] \in R^3$，强度$i \in R$。 读写12345import open3d as o3d i">
+<meta property="og:description" content="点云     网格     RGB-D图像       Open3D提供了三种数据结构：  点云 (point cloud) 网格 (mesh) RGB-D图像  点云 点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息\([x, y, z] \in R^3\)，法线\([n_x, n_y, n_z] \in R^3\)，颜色\([r, g, b] \in R^3">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/imgs/$%7Bfiilename%7D/image-20230529195249712-5548602.png">
-<meta property="og:image" content="http://example.com/imgs/$%7Bfiilename%7D/image-20230529200903511-5548552-5548554-5548555-5548556.png">
 <meta property="og:image" content="http://example.com/imgs/$%7Bfiilename%7D/image-20230529203146624-5548590.png">
 <meta property="article:published_time" content="2023-05-31T09:00:58.000Z">
-<meta property="article:modified_time" content="2023-06-01T11:34:49.797Z">
+<meta property="article:modified_time" content="2023-06-01T12:03:35.174Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Junwei Zha">
 <meta name="twitter:card" content="summary">
@@ -81,7 +80,11 @@
   </style>
 </noscript>
 
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -210,7 +213,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-01 19:34:49" itemprop="dateModified" datetime="2023-06-01T19:34:49+08:00">2023-06-01</time>
+                <time title="修改时间：2023-06-01 20:03:35" itemprop="dateModified" datetime="2023-06-01T20:03:35+08:00">2023-06-01</time>
               </span>
 
           
@@ -224,85 +227,116 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Open3D提供了三种数据结构：</p>
+        <div id="TOC">
+    <ul>
+    <li><a href="#点云" id="toc-点云">点云</a></li>
+    <li><a href="#网格" id="toc-网格">网格</a></li>
+    <li><a href="#rgb-d图像" id="toc-rgb-d图像">RGB-D图像</a></li>
+    </ul>
+</div>
+<p>Open3D提供了三种数据结构：</p>
 <ul>
 <li>点云 (point cloud)</li>
 <li>网格 (mesh)</li>
 <li>RGB-D图像</li>
 </ul>
-<h3 id="点云"><a href="#点云" class="headerlink" title="点云"></a>点云</h3><p>点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息$[x, y, z] \in R^3$，法线$[n_x, n_y, n_z] \in R^3$，颜色$[r, g, b] \in R^3$，强度$i \in R$。</p>
-<h4 id="读写"><a href="#读写" class="headerlink" title="读写"></a>读写</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">pcd = o3d.io.read_point_cloud(&quot;data/fragment.pcd&quot;)</span><br><span class="line">o3d.io.write_point_cloud(&quot;first.pcd&quot;, pcd)</span><br><span class="line">print(np.asarray(pcd.points))</span><br></pre></td></tr></table></figure>
-
-<p><code>o3d.io.read_point_cloud(filename, format=&#39;auto&#39;)</code>其中假如指定了<code>format</code>参数，以下是支持的格式</p>
+<h3 id="点云">点云</h3>
+<p>点云数据可以有多种格式，其包含的信息常见的有10个维度：位置信息<span
+class="math inline">\([x, y, z] \in R^3\)</span>，法线<span
+class="math inline">\([n_x, n_y, n_z] \in R^3\)</span>，颜色<span
+class="math inline">\([r, g, b] \in R^3\)</span>，强度<span
+class="math inline">\(i \in R\)</span>。</p>
+<h4 id="读写">读写</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">pcd = o3d.io.read_point_cloud(&quot;data/fragment.pcd&quot;)</span><br><span class="line">o3d.io.write_point_cloud(&quot;first.pcd&quot;, pcd)</span><br><span class="line">print(np.asarray(pcd.points))</span><br></pre></td></tr></table></figure>
+<p><code>o3d.io.read_point_cloud(filename, format='auto')</code>其中假如指定了<code>format</code>参数，以下是支持的格式</p>
 <table>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 88%" />
+</colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>format</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td>xyz</td>
 <td>每一行包括 [x,y,z] 三个值，x,y,z 是三维坐标</td>
 </tr>
-<tr>
+<tr class="even">
 <td>xyzn</td>
 <td>每一行包括 [x,y,z,nx,ny,nz] 六个值，其中nx,ny,nz 是法线</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>xyzzyrgb</td>
 <td>每一行包括 [x,y,z,r,g,b] 六个值，这里r,g,b的范围在[0，1]浮动</td>
 </tr>
-<tr>
+<tr class="even">
 <td>pts</td>
-<td>第一行是一个整数，表示点的个数。之后每一行包括 [x,y,z,i,r,g,b] 七个值，其中rgb的类型为uint8</td>
+<td>第一行是一个整数，表示点的个数。之后每一行包括 [x,y,z,i,r,g,b]
+七个值，其中rgb的类型为uint8</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>ply</td>
-<td>这个格式可以包含点云和网格数据，详情请参考<a target="_blank" rel="noopener" href="http://paulbourke.net/dataformats/ply/">这个链接</a></td>
+<td>这个格式可以包含点云和网格数据，详情请参考<a
+target="_blank" rel="noopener" href="http://paulbourke.net/dataformats/ply/">这个链接</a></td>
 </tr>
-<tr>
+<tr class="even">
 <td>pcd</td>
-<td>请看官方给出的php文件，<a target="_blank" rel="noopener" href="http://www.open3d.org/docs/release/tutorial/Basic/file_io.html">链接</a></td>
+<td>请看官方给出的php文件，<a
+target="_blank" rel="noopener" href="http://www.open3d.org/docs/release/tutorial/Basic/file_io.html">链接</a></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>auto</td>
 <td>自动通过后缀名来识别</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>例如</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pcd =o3d.io.read_point_cloud(&quot;data/fragment.pcd&quot;,format=&#x27;xyz&#x27;)</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="numpy转PointCloud"><a href="#numpy转PointCloud" class="headerlink" title="numpy转PointCloud"></a>numpy转PointCloud</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">xyz = np.asarray(pcd.points)</span><br><span class="line">pcd = o3d.geometry.PointCloud()</span><br><span class="line">pcd.points = o3d.utility.Vector3dVector(xyz)</span><br><span class="line">pcd.colors = o3d.utility.Vector3dVector(np.random.uniform(size=xyz.shape))</span><br><span class="line">o3d.visualization.draw_geometries([pcd],</span><br><span class="line">                                  zoom=0.3412,</span><br><span class="line">                                  front=[0.4257, -0.2125, -0.8795],</span><br><span class="line">                                  lookat=[2.6172, 2.0475, 1.532],</span><br><span class="line">                                  up=[-0.0694, -0.9768, 0.2024])</span><br><span class="line">print(np.asarray(pcd.points))</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="可视化"><a href="#可视化" class="headerlink" title="可视化"></a>可视化</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">pcd = o3d.io.read_point_cloud(&quot;data/fragment.pcd&quot;)</span><br><span class="line">o3d.visualization.draw_geometries([pcd],</span><br><span class="line">                                  zoom=0.3412,</span><br><span class="line">                                  front=[0.4257, -0.2125, -0.8795],</span><br><span class="line">                                  lookat=[2.6172, 2.0475, 1.532],</span><br><span class="line">                                  up=[-0.0694, -0.9768, 0.2024])</span><br></pre></td></tr></table></figure>
-
+<h4 id="numpy转pointcloud">numpy转PointCloud</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">xyz = np.asarray(pcd.points)</span><br><span class="line">pcd = o3d.geometry.PointCloud()</span><br><span class="line">pcd.points = o3d.utility.Vector3dVector(xyz)</span><br><span class="line">pcd.colors = o3d.utility.Vector3dVector(np.random.uniform(size=xyz.shape))</span><br><span class="line">o3d.visualization.draw_geometries([pcd],</span><br><span class="line">                                  zoom=0.3412,</span><br><span class="line">                                  front=[0.4257, -0.2125, -0.8795],</span><br><span class="line">                                  lookat=[2.6172, 2.0475, 1.532],</span><br><span class="line">                                  up=[-0.0694, -0.9768, 0.2024])</span><br><span class="line">print(np.asarray(pcd.points))</span><br></pre></td></tr></table></figure>
+<h4 id="可视化">可视化</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">pcd = o3d.io.read_point_cloud(&quot;data/fragment.pcd&quot;)</span><br><span class="line">o3d.visualization.draw_geometries([pcd],</span><br><span class="line">                                  zoom=0.3412,</span><br><span class="line">                                  front=[0.4257, -0.2125, -0.8795],</span><br><span class="line">                                  lookat=[2.6172, 2.0475, 1.532],</span><br><span class="line">                                  up=[-0.0694, -0.9768, 0.2024])</span><br></pre></td></tr></table></figure>
 <p>弹出一个gui,按下<code>h</code>显示支持的命令</p>
-<p><img src="/imgs/$%7Bfiilename%7D/image-20230529195249712-5548602.png" alt="image-20230529195249712"></p>
-<h3 id="网格"><a href="#网格" class="headerlink" title="网格"></a>网格</h3><p>网格（Mesh）指的是一种用以表示几何对象的三维数据结构，它是由顶点、边和面组成的。一般面可以由三角面组成，由于三个点就可以确认一个面，所以面定义为三个顶点的序号。</p>
+<p><img src="/imgs/$%7Bfiilename%7D/image-20230529195249712-5548602.png"
+alt="image-20230529195249712" /></p>
+<h3 id="网格">网格</h3>
+<p>网格（Mesh）指的是一种用以表示几何对象的三维数据结构，它是由顶点、边和面组成的。一般面可以由三角面组成，由于三个点就可以确认一个面，所以面定义为三个顶点的序号。</p>
 <ul>
-<li>顶点(vertices): 顶点的空间坐标$(x,y,z)\in R^3$</li>
-<li>面 (faces): 组成三角面的三个顶点的序号$(i, j, k)\in R^3$</li>
+<li>顶点(vertices): 顶点的空间坐标<span class="math inline">\((x,y,z)\in
+R^3\)</span></li>
+<li>面 (faces): 组成三角面的三个顶点的序号<span
+class="math inline">\((i, j, k)\in R^3\)</span></li>
 </ul>
-<h4 id="读写-1"><a href="#读写-1" class="headerlink" title="读写"></a>读写</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">mesh = o3d.io.read_triangle_mesh(&#x27;data/KnotMesh.ply&#x27;)</span><br><span class="line">print(mesh)</span><br><span class="line">print(&#x27;Vertices:&#x27;)</span><br><span class="line">print(np.asarray(mesh.vertices))</span><br><span class="line">print(&#x27;Triangles:&#x27;)</span><br><span class="line">print(np.asarray(mesh.triangles))</span><br><span class="line">o3d.io.write_triangle_mesh(&quot;mesh.ply&quot;, mesh)</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="可视化-1"><a href="#可视化-1" class="headerlink" title="可视化"></a>可视化</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">mesh = o3d.io.read_triangle_mesh(&#x27;data/KnotMesh.ply&#x27;)</span><br><span class="line"></span><br><span class="line">print(&quot;Try to render a mesh with normals (exist: &quot; +</span><br><span class="line">      str(mesh.has_vertex_normals()) + &quot;) and colors (exist: &quot; +</span><br><span class="line">      str(mesh.has_vertex_colors()) + &quot;)&quot;)</span><br><span class="line">o3d.visualization.draw_geometries([mesh])</span><br><span class="line">print(&quot;A mesh with no normals and no colors does not look good.&quot;)</span><br></pre></td></tr></table></figure>
-
-<p><img src="/imgs/$%7Bfiilename%7D/image-20230529200903511-5548552-5548554-5548555-5548556.png" alt="image-20230529200903511"></p>
-<h3 id="RGB-D图像"><a href="#RGB-D图像" class="headerlink" title="RGB-D图像"></a>RGB-D图像</h3><h4 id="读写-2"><a href="#读写-2" class="headerlink" title="读写"></a>读写</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">image = o3d.io.read_image(&#x27;data/SampleRedwoodRGBDImages/color/00000.jpg&#x27;)</span><br><span class="line">image = o3d.geometry.Image(np.asarray(image))</span><br><span class="line">depth = o3d.io.read_image(&#x27;data/SampleRedwoodRGBDImages/depth/00000.png&#x27;)</span><br><span class="line">rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(image, depth)</span><br><span class="line">o3d.io.write_image(&quot;image.jpg&quot;, image)</span><br><span class="line">o3d.io.write_image(&quot;depth.png&quot;, depth)</span><br><span class="line">print(rgbd_image)</span><br><span class="line">print(np.asarray(rgbd_image.color))</span><br><span class="line">print(np.asarray(rgbd_image.depth))</span><br></pre></td></tr></table></figure>
-
-<p>其中彩色图被转为了灰色图[0, 1]，深度图的单位为米。<code>o3d.geometry.Image</code>支持将<code>numpy数组</code>转为<code>Image</code>。</p>
-<h4 id="转点云"><a href="#转点云" class="headerlink" title="转点云"></a>转点云</h4><p><code>create_from_rgbd_image(rgbd_image, intrinsic, extrinsic=I)</code></p>
-<p>将RGB-D图像转为点云。给定坐标$(u, v)$处像素的深度$d$，则对应的3d点云坐标为:<br>$$<br>z &#x3D; d&#x2F;depth_scale \<br>x &#x3D; (u-cx) * z &#x2F;fx \<br>y &#x3D; (v-cy) * z &#x2F;fy<br>$$<br>其中<code>extrinsic</code>给<code>numpy</code>，<code>intrinsic</code>可以由<code>open3d.camera.PinholeCameraIntrinsic</code>生成。</p>
+<h4 id="读写-1">读写</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">mesh = o3d.io.read_triangle_mesh(&#x27;data/KnotMesh.ply&#x27;)</span><br><span class="line">print(mesh)</span><br><span class="line">print(&#x27;Vertices:&#x27;)</span><br><span class="line">print(np.asarray(mesh.vertices))</span><br><span class="line">print(&#x27;Triangles:&#x27;)</span><br><span class="line">print(np.asarray(mesh.triangles))</span><br><span class="line">o3d.io.write_triangle_mesh(&quot;mesh.ply&quot;, mesh)</span><br></pre></td></tr></table></figure>
+<h4 id="可视化-1">可视化</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">mesh = o3d.io.read_triangle_mesh(&#x27;data/KnotMesh.ply&#x27;)</span><br><span class="line"></span><br><span class="line">print(&quot;Try to render a mesh with normals (exist: &quot; +</span><br><span class="line">      str(mesh.has_vertex_normals()) + &quot;) and colors (exist: &quot; +</span><br><span class="line">      str(mesh.has_vertex_colors()) + &quot;)&quot;)</span><br><span class="line">o3d.visualization.draw_geometries([mesh])</span><br><span class="line">print(&quot;A mesh with no normals and no colors does not look good.&quot;)</span><br></pre></td></tr></table></figure>
+<p><img
+src="/imgs/$%7Bfiilename%7D/image-20230529200903511-5548552-5548554-5548555-5548556.png"
+alt="image-20230529200903511" /></p>
+<h3 id="rgb-d图像">RGB-D图像</h3>
+<h4 id="读写-2">读写</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import open3d as o3d </span><br><span class="line">import numpy as np </span><br><span class="line">import ipdb </span><br><span class="line">image = o3d.io.read_image(&#x27;data/SampleRedwoodRGBDImages/color/00000.jpg&#x27;)</span><br><span class="line">image = o3d.geometry.Image(np.asarray(image))</span><br><span class="line">depth = o3d.io.read_image(&#x27;data/SampleRedwoodRGBDImages/depth/00000.png&#x27;)</span><br><span class="line">rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(image, depth)</span><br><span class="line">o3d.io.write_image(&quot;image.jpg&quot;, image)</span><br><span class="line">o3d.io.write_image(&quot;depth.png&quot;, depth)</span><br><span class="line">print(rgbd_image)</span><br><span class="line">print(np.asarray(rgbd_image.color))</span><br><span class="line">print(np.asarray(rgbd_image.depth))</span><br></pre></td></tr></table></figure>
+<p>其中彩色图被转为了灰色图[0,
+1]，深度图的单位为米。<code>o3d.geometry.Image</code>支持将<code>numpy数组</code>转为<code>Image</code>。</p>
+<h4 id="转点云">转点云</h4>
+<p><code>create_from_rgbd_image(rgbd_image, intrinsic, extrinsic=I)</code></p>
+<p>将RGB-D图像转为点云。给定坐标<span class="math inline">\((u,
+v)\)</span>处像素的深度<span
+class="math inline">\(d\)</span>，则对应的3d点云坐标为:<br />
+<span class="math display">\[
+z = d/depth\_scale \\
+x = (u-cx) * z /fx \\
+y = (v-cy) * z /fy
+\]</span><br />
+其中<code>extrinsic</code>给<code>numpy</code>，<code>intrinsic</code>可以由<code>open3d.camera.PinholeCameraIntrinsic</code>生成。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">intrinsic = o3d.camera.PinholeCameraIntrinsic(width=640, height=480, fx=525, fy=525, cx=319.5, cy=239.5)</span><br><span class="line">pcd = o3d.geometry.PointCloud.create_from_rgbd_image(</span><br><span class="line">    rgbd_image,</span><br><span class="line">    intrinsic=intrinsic,</span><br><span class="line">    extrinsic=np.eye(4))</span><br><span class="line"># Flip it, otherwise the pointcloud will be upside down</span><br><span class="line">pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])</span><br><span class="line">o3d.visualization.draw_geometries([pcd])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p><img src="/imgs/$%7Bfiilename%7D/image-20230529203146624-5548590.png" alt="image-20230529203146624"></p>
+<p><img src="/imgs/$%7Bfiilename%7D/image-20230529203146624-5548590.png"
+alt="image-20230529203146624" /></p>
 
     </div>
 
@@ -380,7 +414,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E4%BA%91"><span class="nav-number">1.</span> <span class="nav-text">点云</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99"><span class="nav-number">1.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#numpy%E8%BD%ACPointCloud"><span class="nav-number">1.2.</span> <span class="nav-text">numpy转PointCloud</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">可视化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E6%A0%BC"><span class="nav-number">2.</span> <span class="nav-text">网格</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99-1"><span class="nav-number">2.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96-1"><span class="nav-number">2.2.</span> <span class="nav-text">可视化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RGB-D%E5%9B%BE%E5%83%8F"><span class="nav-number">3.</span> <span class="nav-text">RGB-D图像</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99-2"><span class="nav-number">3.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E7%82%B9%E4%BA%91"><span class="nav-number">3.2.</span> <span class="nav-text">转点云</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%82%B9%E4%BA%91"><span class="nav-number">1.</span> <span class="nav-text">点云</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99"><span class="nav-number">1.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#numpy%E8%BD%ACpointcloud"><span class="nav-number">1.2.</span> <span class="nav-text">numpy转PointCloud</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">可视化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E6%A0%BC"><span class="nav-number">2.</span> <span class="nav-text">网格</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99-1"><span class="nav-number">2.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96-1"><span class="nav-number">2.2.</span> <span class="nav-text">可视化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rgb-d%E5%9B%BE%E5%83%8F"><span class="nav-number">3.</span> <span class="nav-text">RGB-D图像</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%86%99-2"><span class="nav-number">3.1.</span> <span class="nav-text">读写</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E7%82%B9%E4%BA%91"><span class="nav-number">3.2.</span> <span class="nav-text">转点云</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
