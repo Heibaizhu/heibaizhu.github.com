@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="0.2.8 - 2019-03-09     0.2.7 -     2018-08-15     0.2.6 -     2018-04-30     0.2.5 -     2018-02-02     0.2.4 -     2016-06-28     0.2.3 -     2016-03-24     0.2.2 -     2016-03-12     0.2.1">
+  <meta name="description" content="0.2.8 - 2019-03-09  Fixed: Edge form support. (#178 - @robinnorth) Fixed: Removed keyup event listener for forms. (#184 - @BehindTheMath) Fixed: Bugs in evalScripts(). (#186 - @BehindTheMath) Fixed: H">
 <meta property="og:type" content="website">
 <meta property="og:title" content="来者可追">
 <meta property="og:url" content="http://example.com/lib/pjax/CHANGELOG.html">
 <meta property="og:site_name" content="来者可追">
-<meta property="og:description" content="0.2.8 - 2019-03-09     0.2.7 -     2018-08-15     0.2.6 -     2018-04-30     0.2.5 -     2018-02-02     0.2.4 -     2016-06-28     0.2.3 -     2016-03-24     0.2.2 -     2016-03-12     0.2.1">
+<meta property="og:description" content="0.2.8 - 2019-03-09  Fixed: Edge form support. (#178 - @robinnorth) Fixed: Removed keyup event listener for forms. (#184 - @BehindTheMath) Fixed: Bugs in evalScripts(). (#186 - @BehindTheMath) Fixed: H">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-05-31T16:22:47.912Z">
 <meta property="article:modified_time" content="2023-05-31T16:22:47.912Z">
@@ -206,125 +206,87 @@
       
       
       <div class="post-body">
-          <div id="TOC">
-    <ul>
-    <li><a href="#section" id="toc-section">0.2.8 - 2019-03-09</a></li>
-    <li><a href="#section-1" id="toc-section-1">0.2.7 -
-    2018-08-15</a></li>
-    <li><a href="#section-2" id="toc-section-2">0.2.6 -
-    2018-04-30</a></li>
-    <li><a href="#section-3" id="toc-section-3">0.2.5 -
-    2018-02-02</a></li>
-    <li><a href="#section-4" id="toc-section-4">0.2.4 -
-    2016-06-28</a></li>
-    <li><a href="#section-5" id="toc-section-5">0.2.3 -
-    2016-03-24</a></li>
-    <li><a href="#section-6" id="toc-section-6">0.2.2 -
-    2016-03-12</a></li>
-    <li><a href="#section-7" id="toc-section-7">0.2.1 -
-    2015-02-04</a></li>
-    <li><a href="#section-8" id="toc-section-8">0.2.0 -
-    2015-02-04</a></li>
-    <li><a href="#section-9" id="toc-section-9">0.1.4 -
-    2014-10-14</a></li>
-    <li><a href="#section-10" id="toc-section-10">0.1.3 -
-    2014-09-16</a></li>
-    <li><a href="#section-11" id="toc-section-11">0.1.2 -
-    2014-04-03</a></li>
-    <li><a href="#section-12" id="toc-section-12">0.1.1 -
-    2014-04-02</a></li>
-    <li><a href="#section-13" id="toc-section-13">0.1.0 -
-    2014-03-24</a></li>
-    </ul>
-</div>
-<h1 id="section">0.2.8 - 2019-03-09</h1>
+          <h1 id="section">0.2.8 - 2019-03-09</h1>
 <ul>
-<li>Fixed: Edge form support.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/178">#178</a> - <span
+<li>Fixed: Edge form support. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/178">#178</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Fixed: Removed keyup event listener for forms.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/184">#184</a> - <span
+<li>Fixed: Removed keyup event listener for forms. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/184">#184</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Fixed: Bugs in evalScripts().<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/186">#186</a> - <span
+<li>Fixed: Bugs in evalScripts(). (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/186">#186</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Fixed: Handle non-string HTML passed to loadContent().<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/200">#200</a> - <span
+<li>Fixed: Handle non-string HTML passed to loadContent(). (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/200">#200</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Tooling: Switch linting to ESLint and Prettier.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/191">#191</a> - <span
+<li>Tooling: Switch linting to ESLint and Prettier. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/191">#191</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 </ul>
 <h1 id="section-1">0.2.7 - 2018-08-15</h1>
 <ul>
-<li>Fixed: Parsing values of option elements in forms.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/162">#162</a> - <span
+<li>Fixed: Parsing values of option elements in forms. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/162">#162</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Fixed: Added index.d.ts to package.json so it will be installed by
-npm.<br />
-(<a
+npm. (<a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/commit/c589ab9c25bee6161bf3e557eaca44e51c14fb89">c589ab9</a>
 - <span class="citation"
 data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Fixed: <code>options.history</code> to correctly parse being set to
-false.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/165">#165</a> - <span
+false. (<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/165">#165</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>).</li>
 <li>Fixed: Pass the current <code>options</code> object to
-<code>loadContent()</code>.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/171">#171</a> - <span
+<code>loadContent()</code>. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/171">#171</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Fixed: Ensure correct XHR encoding for multipart/form-data
-forms<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/174">#174</a> - <span
+<li>Fixed: Ensure correct XHR encoding for multipart/form-data forms (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/174">#174</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: More documentation.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/160">#160</a>, <a
+<li>Added: More documentation. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/160">#160</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/171">#171</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>, <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 </ul>
 <h1 id="section-2">0.2.6 - 2018-04-30</h1>
 <ul>
-<li>Fixed: Form submission for GET requests.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/129">#129</a> - <span
+<li>Fixed: Form submission for GET requests. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/129">#129</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
 <li>Fixed: Refactor <code>loadUrl()</code> to make manually calling
-simpler.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/134">#134</a> - <span
-class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Fixed: Support multiple select fields in form submissions.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/147">#147</a> - <span
+simpler. (<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/134">#134</a> -
+<span class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
+<li>Fixed: Support multiple select fields in form submissions. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/147">#147</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
 <li>Fixed: Use the same options object in <code>handle-response</code>
 as in <code>send-request</code>. This way,
-<code>pjax.state.options</code> will also have the request
-options.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/148">#148</a> - <span
+<code>pjax.state.options</code> will also have the request options. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/148">#148</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Added: Move the XHR callback to a separate method, and trigger an
-error event if the response cannot be parsed.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/137">#137</a> - <span
+error event if the response cannot be parsed. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/137">#137</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: TypeScript definitions.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/138">#138</a> - <span
+<li>Added: TypeScript definitions. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/138">#138</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Added: <code>replaceNode</code> switch, as an alternative to the
-<code>outerHTML</code> switch.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/141">#141</a> - <span
+<code>outerHTML</code> switch. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/141">#141</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Added: <code>X-PJAX-Selectors</code> HTTP header. This is a
 serialized JSON array of selectors, taken from
 <code>options.selectors</code>. You can use this to send back only the
 elements that Pjax will use to switch, instead of sending the whole
-page.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/144">#144</a> - <span
+page. (<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/144">#144</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: An option to use <code>FormData</code> to submit forms.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/153">#153</a> - <span
+<li>Added: An option to use <code>FormData</code> to submit forms. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/153">#153</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: Tests.<br />
-(<a
+<li>Added: Tests. (<a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/commit/f98f2dd63b48113ff91b6bd8808257bfc723ef6b">f98f2dd</a>,
 <a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/145">#145</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>, <span
@@ -333,69 +295,69 @@ class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <h1 id="section-3">0.2.5 - 2018-02-02</h1>
 <ul>
 <li>Fixed: Async switch functions now work correctly, because the DOM is
-now parsed after all the switches finish.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/79">#79</a>, <a
+now parsed after all the switches finish. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/79">#79</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/110">#110</a> - <span
 class="citation" data-cites="oskarrough">@oskarrough</span>, <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>, <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Fixed: Bug on IE11 preventing AJAX page refresh.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/81">#81</a> - <span
+<li>Fixed: Bug on IE11 preventing AJAX page refresh. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/81">#81</a> - <span
 class="citation" data-cites="CPTechnikVX">@CPTechnikVX</span>)</li>
 <li>Fixed: Default switches are now available as
-<code>Pjax.switches</code>.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/92">#92</a> - <span
+<code>Pjax.switches</code>. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/92">#92</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Fixed: An error that was caused by a missing
-<code>switchElementsAlt</code>.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/93">#93</a>, <a
+<code>switchElementsAlt</code>. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/93">#93</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/104">#104</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>, <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Fixed: Incorrect <code>main</code> field in npm package<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/105">#105</a> - <span
+<li>Fixed: Incorrect <code>main</code> field in npm package (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/105">#105</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
 <li>Fixed: A pending XHR is now aborted if the user navigates somewhere
-else before the request is finished.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/114">#114</a> - <span
+else before the request is finished. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/114">#114</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
 <li>Fixed: When rendering new content, focus will now be removed only
-from elements within one of the containers manipulated by Pjax.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/116">#116</a> - <span
+from elements within one of the containers manipulated by Pjax. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/116">#116</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Fixed: Stop dispatching extraneous <code>pjax:complete</code> events
-when external scripts load<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/118">#118</a> - <span
+when external scripts load (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/118">#118</a> - <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Added: Send the <code>X-PJAX</code> header with XHR requests.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/80">#80</a> - <span
+<li>Added: Send the <code>X-PJAX</code> header with XHR requests. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/80">#80</a> - <span
 class="citation" data-cites="bram1028">@bram1028</span>)</li>
 <li>Added: Direct download link for script tags. (<span class="citation"
 data-cites="MoOx">@MoOx</span>)</li>
 <li>Added: Pass the element that triggered Pjax to the
-<code>pjax:send</code> event.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/94">#94</a> - <span
+<code>pjax:send</code> event. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/94">#94</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: An option to set a timeout for XHR requests.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/95">#95</a> - <span
+<li>Added: An option to set a timeout for XHR requests. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/95">#95</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: Checks for XHR redirects<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/101">#101</a> - <span
+<li>Added: Checks for XHR redirects (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/101">#101</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
 <li>Added: Save scroll position with history, and restore when
-navigating backwards or forwards.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/110">#110</a>, <a
+navigating backwards or forwards. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/110">#110</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/119">#119</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>, <span
 class="citation" data-cites="robinnorth">@robinnorth</span>)</li>
-<li>Added: Scroll to element position when URL contains a hash<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/110">#110</a> - <span
+<li>Added: Scroll to element position when URL contains a hash (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/110">#110</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Added: Minified version of the Pjax bundle.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/115">#115</a> - <span
+<li>Added: Minified version of the Pjax bundle. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/115">#115</a> - <span
 class="citation" data-cites="BehindTheMath">@BehindTheMath</span>)</li>
-<li>Changed: Miscellaneous code and tests cleanup.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/96">#96</a>, <a
+<li>Changed: Miscellaneous code and tests cleanup. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/96">#96</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/98">#98</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/99">#99</a>, <a
 target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/1070">#100</a>, <a
@@ -409,43 +371,40 @@ data-cites="robinnorth">@robinnorth</span>)</li>
 <h1 id="section-4">0.2.4 - 2016-06-28</h1>
 <ul>
 <li>Fixed: <code>refresh</code> should now work (use
-<code>this.parseDOM</code> for refresh)<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/67">#67</a> - <span
+<code>this.parseDOM</code> for refresh) (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/67">#67</a> - <span
 class="citation" data-cites="compressed">@compressed</span>)</li>
 <li>Fixed: Some attributes, such as <code>itemscope</code> have no
-corresponding value.<br />
-This change allows them to still be set.<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/67">#67</a> - <span
+corresponding value. This change allows them to still be set. (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/67">#67</a> - <span
 class="citation" data-cites="compressed">@compressed</span>)</li>
-<li>Added: <code>cacheBust</code> option<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/71">#71</a> - <span
+<li>Added: <code>cacheBust</code> option (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/71">#71</a> - <span
 class="citation" data-cites="tremby">@tremby</span>)</li>
 </ul>
 <h1 id="section-5">0.2.3 - 2016-03-24</h1>
 <ul>
 <li>Fixed: <code>currentUrlFullReload</code> option now works</li>
-<li>Fixed: <code>this.reload</code> is now a Function<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/issues/65">#65</a>)</li>
+<li>Fixed: <code>this.reload</code> is now a Function (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/issues/65">#65</a>)</li>
 </ul>
 <h1 id="section-6">0.2.2 - 2016-03-12</h1>
 <ul>
-<li>Fixed: added back standalone version in <code>./pjax.js</code><br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/issues/57">#57</a></li>
+<li>Fixed: added back standalone version in <code>./pjax.js</code> (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/issues/57">#57</a></li>
 <li>Fixed: error when using pjax with google analytics
-(<code>options</code> was undefined)<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/59">#59</a>)</li>
-<li>Fixed: HierarchyRequestError error<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/49">#49</a>)</li>
-<li>Fixed:
-<code>TypeError: Pjax.forEachEls is not a function</code><br />
+(<code>options</code> was undefined) (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/59">#59</a>)</li>
+<li>Fixed: HierarchyRequestError error (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/49">#49</a>)</li>
+<li>Fixed: <code>TypeError: Pjax.forEachEls is not a function</code> (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/52">#52</a>)</li>
+<li>Fixed: <code>TypeError: Pjax.executeScripts is not a function</code>
 (<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/52">#52</a>)</li>
-<li>Fixed:
-<code>TypeError: Pjax.executeScripts is not a function</code><br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/52">#52</a>)</li>
-<li>Fixed: <code>TypeError: Pjax.clone is not a function</code><br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/52">#52</a>)</li>
-<li>Added: Ignore events with prevented defaults<br />
-(<a target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/50">#50</a>)</li>
+<li>Fixed: <code>TypeError: Pjax.clone is not a function</code> (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/52">#52</a>)</li>
+<li>Added: Ignore events with prevented defaults (<a
+target="_blank" rel="noopener" href="https://github.com/MoOx/pjax/pull/50">#50</a>)</li>
 </ul>
 <h1 id="section-7">0.2.1 - 2015-02-04</h1>
 <ul>
