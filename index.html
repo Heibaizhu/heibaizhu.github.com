@@ -202,10 +202,24 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-06-02 16:22:18 / 修改时间：16:43:40" itemprop="dateCreated datePublished" datetime="2023-06-02T16:22:18+08:00">2023-06-02</time>
+              <time title="创建时间：2023-06-02 16:22:18 / 修改时间：19:41:47" itemprop="dateCreated datePublished" datetime="2023-06-02T16:22:18+08:00">2023-06-02</time>
             </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -274,10 +288,24 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-02 00:42:14" itemprop="dateModified" datetime="2023-06-02T00:42:14+08:00">2023-06-02</time>
+                <time title="修改时间：2023-06-04 13:43:35" itemprop="dateModified" datetime="2023-06-04T13:43:35+08:00">2023-06-04</time>
               </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/05/31/open3d_io/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/31/open3d_io/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -343,12 +371,32 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-05-31 17:00:58 / 修改时间：23:50:16" itemprop="dateCreated datePublished" datetime="2023-05-31T17:00:58+08:00">2023-05-31</time>
+              <time title="创建时间：2023-05-31 17:00:58" itemprop="dateCreated datePublished" datetime="2023-05-31T17:00:58+08:00">2023-05-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-06-04 13:44:31" itemprop="dateModified" datetime="2023-06-04T13:44:31+08:00">2023-06-04</time>
+              </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -646,6 +694,35 @@ window.addEventListener('pjax:success', () => {
     
 
   
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'o7p9Dib4M1TG87DZSo7a3l8K-gzGzoHsz',
+      appKey     : 'pp3zmuhp6OO8Sy8n9xptgx4M',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
 
     </div>
 </body>

@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://example.com/imgs/$%7Bfiilename%7D/image-20230529195249712-5548602.png">
 <meta property="og:image" content="http://example.com/imgs/$%7Bfiilename%7D/image-20230529203146624-5548590.png">
 <meta property="article:published_time" content="2023-05-31T09:00:58.000Z">
-<meta property="article:modified_time" content="2023-06-01T16:42:14.981Z">
+<meta property="article:modified_time" content="2023-06-04T05:43:35.575Z">
 <meta property="article:author" content="BigK">
 <meta property="article:tag" content="Junwei Zha">
 <meta name="twitter:card" content="summary">
@@ -213,10 +213,24 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-02 00:42:14" itemprop="dateModified" datetime="2023-06-02T00:42:14+08:00">2023-06-02</time>
+                <time title="修改时间：2023-06-04 13:43:35" itemprop="dateModified" datetime="2023-06-04T13:43:35+08:00">2023-06-04</time>
               </span>
 
           
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/05/31/open3d_io/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/31/open3d_io/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
 
         </div>
       </header>
@@ -335,7 +349,7 @@ x = (u-cx) * z /fx \\
 y = (v-cy) * z /fy
 \end{aligned}
 \]</span>
-其中<code>extrinsic</code>给<code>numpy</code>，<code>intrinsic</code>可以由<code>open3d.camera.PinholeCameraIntrinsic</code>生成。</p>
+其中<code>extrinsic</code>给<code>numpy</code>，<code>intrinsic</code>可以由<code>open3d.camera.PinholeCameraIntrinsic</code>生成</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">intrinsic = o3d.camera.PinholeCameraIntrinsic(width=640, height=480, fx=525, fy=525, cx=319.5, cy=239.5)</span><br><span class="line">pcd = o3d.geometry.PointCloud.create_from_rgbd_image(</span><br><span class="line">    rgbd_image,</span><br><span class="line">    intrinsic=intrinsic,</span><br><span class="line">    extrinsic=np.eye(4))</span><br><span class="line"># Flip it, otherwise the pointcloud will be upside down</span><br><span class="line">pcd.transform([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])</span><br><span class="line">o3d.visualization.draw_geometries([pcd])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <figure>
 <img src="/imgs/$%7Bfiilename%7D/image-20230529203146624-5548590.png"
@@ -376,6 +390,7 @@ alt="image-20230529203146624" />
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -641,6 +656,35 @@ window.addEventListener('pjax:success', () => {
     
 
   
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'o7p9Dib4M1TG87DZSo7a3l8K-gzGzoHsz',
+      appKey     : 'pp3zmuhp6OO8Sy8n9xptgx4M',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
 
     </div>
 </body>
