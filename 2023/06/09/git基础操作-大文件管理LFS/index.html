@@ -20,18 +20,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="The world is not a fine place, but worth the fighting for">
-<meta property="og:type" content="website">
-<meta property="og:title" content="来者可追">
-<meta property="og:url" content="http://example.com/archives/2023/05/index.html">
+  <meta name="description" content="a diagram showing how Git LFS works  Git LFS（Large File Storage）是一种Git扩展，用于处理大文件存储问题。它允许Git仓库内更有效地管理和追踪大文件，如图像、音频、视频和数据集等，而无需在仓库中储存这些庞大的二进制文件。Git LFS通过代替大文件存储指针，将这些大文件存放在单独的服务器上。当克隆或检出特定版本时，Git LFS将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git基础操作-大文件管理LFS">
+<meta property="og:url" content="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/index.html">
 <meta property="og:site_name" content="来者可追">
-<meta property="og:description" content="The world is not a fine place, but worth the fighting for">
+<meta property="og:description" content="a diagram showing how Git LFS works  Git LFS（Large File Storage）是一种Git扩展，用于处理大文件存储问题。它允许Git仓库内更有效地管理和追踪大文件，如图像、音频、视频和数据集等，而无需在仓库中储存这些庞大的二进制文件。Git LFS通过代替大文件存储指针，将这些大文件存放在单独的服务器上。当克隆或检出特定版本时，Git LFS将">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/06/09/imgs/$%7Bfiilename%7D/graphic.gif">
+<meta property="article:published_time" content="2023-06-09T07:32:38.000Z">
+<meta property="article:modified_time" content="2023-06-09T08:33:16.490Z">
 <meta property="article:author" content="BigK">
-<meta property="article:tag" content="Junwei Zha">
+<meta property="article:tag" content="Git">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/06/09/imgs/$%7Bfiilename%7D/graphic.gif">
 
-<link rel="canonical" href="http://example.com/archives/2023/05/">
+<link rel="canonical" href="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/">
 
 
 <script id="page-configurations">
@@ -39,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | 来者可追</title>
+  <title>git基础操作-大文件管理LFS | 来者可追</title>
   
 
 
@@ -171,76 +175,154 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          git基础操作-大文件管理LFS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-09 15:32:38 / 修改时间：16:33:16" itemprop="dateCreated datePublished" datetime="2023-06-09T15:32:38+08:00">2023-06-09</time>
+            </span>
+
+          
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 5 篇日志。 继续努力。</span>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <figure>
+<img src="../imgs/$%7Bfiilename%7D/graphic.gif"
+alt="a diagram showing how Git LFS works" />
+<figcaption aria-hidden="true">a diagram showing how Git LFS
+works</figcaption>
+</figure>
+<p>Git LFS（Large File
+Storage）是一种Git扩展，用于处理大文件存储问题。它允许Git仓库内更有效地管理和追踪大文件，如图像、音频、视频和数据集等，而无需在仓库中储存这些庞大的二进制文件。Git
+LFS通过代替大文件存储指针，将这些大文件存放在单独的服务器上。当克隆或检出特定版本时，Git
+LFS将自动下载替换对应的大文件。</p>
+<p>传统的Git处理方式主要针对源代码和小型文件。当在仓库中保存大文件并提交许多变更时，可能影响克隆、拉取和推送操作的性能。Git
+LFS解决了这个问题，使在不影响操作性能的情况下存储和跟踪大文件。</p>
+<p>使用Git LFS的主要优点包括：</p>
+<ol type="1">
+<li><strong>性能改善</strong>：通过分离大文件和源代码管理，降低仓库克隆和拉取等操作处理时间。</li>
+<li><strong>有效存储</strong>：减少由于频繁存储大文件变化带来的仓库空间消耗。</li>
+<li><strong>简化工作流程</strong>：无需修改您使用Git的方式，只需一次简单的设置，即可自动处理大文件。</li>
+</ol>
+<span id="more"></span>
+<h3 id="下载安装lfs">下载安装LFS</h3>
+<p>既然是扩展，要使用LFS就需要先下载安装，可以参考https://github.com/git-lfs/git-lfs/releases</p>
+<p><strong>mac</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install git-lfs  # 安装lfs</span><br><span class="line">git lfs install  #git初始化lfs</span><br></pre></td></tr></table></figure>
+<h3 id="lfs使用">LFS使用</h3>
+<p>LFS托管大文件可以分为3步：</p>
+<ul>
+<li>追踪：lfs track "*.png"</li>
+<li>添加、提交：git add ; git commit</li>
+<li>推流：git lfs push; git push</li>
+<li>拉取: git lfs pull ; git pull</li>
+</ul>
+<h4 id="拉取">拉取</h4>
+<p>如果没有远程仓库或者远程仓库没有lfs则可以忽略一步，首先进行正常拉取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull</span><br></pre></td></tr></table></figure>
+<p>这一步也会拉取的仓库中也会有大文件，但只是空壳，它们实质是指向其 LFS
+存储对象的文件指针，要下载可用的大文件还需要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs pull</span><br></pre></td></tr></table></figure>
+<h4 id="追踪">追踪</h4>
+<p><strong>一定要先track再add、commit</strong>，<strong>一定要先track再add、commit</strong>，<strong>一定要先track再add、commit</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lfs track &quot;*.png&quot;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>假如不小心在lfs_track之前已经<code>git add</code>过了，可以通过<code>git rm --cached</code>在暂存区删除这些文件（不会真的在工作区删除这些文件）</p>
+</blockquote>
+<p>检查已经track的文件列表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs ls-files </span><br></pre></td></tr></table></figure>
+<h4 id="添加">添加</h4>
+<p>就正常的添加和提交即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add -u</span><br><span class="line">git commit -m &quot;add some large files&quot;</span><br></pre></td></tr></table></figure>
+<h4 id="推流">推流</h4>
+<p>lfs的推流和git的普通推流貌似是独立的，我建议先推lfs再推普通的push</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git lfs push #推大文件</span><br><span class="line">git push #普通推流</span><br></pre></td></tr></table></figure>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-05-31T17:00:58+08:00"
-              content="2023-05-31">
-          05-31
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/05/31/open3d_io/" itemprop="url">
-            <span itemprop="name">OPEN3D_IO</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-05-31T17:00:58+08:00"
-              content="2023-05-31">
-          05-31
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" itemprop="url">
-            <span itemprop="name">搭建博客</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
+        
 
 
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/" rel="prev" title="程序员日常必备快捷键">
+      <i class="fa fa-chevron-left"></i> 程序员日常必备快捷键
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="git基础操作-常用命令">
+      git基础操作-常用命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-  </div>
+      </footer>
+    
+  </article>
   
   
-  
-
   
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -287,6 +369,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85lfs"><span class="nav-number">1.</span> <span class="nav-text">下载安装LFS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lfs%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">LFS使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%89%E5%8F%96"><span class="nav-number">2.1.</span> <span class="nav-text">拉取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%BD%E8%B8%AA"><span class="nav-number">2.2.</span> <span class="nav-text">追踪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0"><span class="nav-number">2.3.</span> <span class="nav-text">添加</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E6%B5%81"><span class="nav-number">2.4.</span> <span class="nav-text">推流</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

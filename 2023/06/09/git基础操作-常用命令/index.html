@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="记录了一些工作中实际会用到的常用命令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git基础操作-常用命令">
+<meta property="og:url" content="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="来者可追">
+<meta property="og:description" content="记录了一些工作中实际会用到的常用命令">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-09T08:07:31.000Z">
+<meta property="article:modified_time" content="2023-06-09T08:08:23.245Z">
+<meta property="article:author" content="BigK">
+<meta property="article:tag" content="Junwei Zha">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>git基础操作-常用命令 | 来者可追</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">来者可追</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          git基础操作-常用命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-09 16:07:31 / 修改时间：16:08:23" itemprop="dateCreated datePublished" datetime="2023-06-09T16:07:31+08:00">2023-06-09</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>记录了一些工作中实际会用到的常用命令</p>
+<span id="more"></span>
+<h4 id="git-commit规范">git commit规范</h4>
+<p>参见https://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html</p>
+<h5 id="安装commitizen">安装Commitizen</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#先要安装npm</span><br><span class="line">npm install -g commitizen</span><br></pre></td></tr></table></figure>
+<h5 id="配置angular规范">配置Angular规范</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">commitizen init cz-conventional-changelog --save --save-exact</span><br></pre></td></tr></table></figure>
+<p>以后，凡是用到git commit命令，一律改成git cz。</p>
+<ul>
+<li><a
+target="_blank" rel="noopener" href="https://git.code.oa.com/search_plat/search_engine_skit/commit/dc139f99977334733566172792c1f92f429ff879">feat:</a><a
+target="_blank" rel="noopener" href="https://git.code.oa.com/search_plat/search_engine_skit/commit/dc139f99977334733566172792c1f92f429ff879">支持fake召回</a>
+[空行] 详细介绍 [空行] --story=899382932</li>
+</ul>
+<h4 id="gitignore规范">.gitignore规范</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"># 此为注释 – 将被 Git 忽略</span><br><span class="line"># 忽略所有 .a 结尾的文件</span><br><span class="line">*.a</span><br><span class="line"># 但 lib.a 除外!lib.a</span><br><span class="line"># 仅仅忽略项目根目录下的 TODO 文件，不包括 subdir</span><br><span class="line">/TODO/TODO</span><br><span class="line"># 忽略 build/ 目录下的所有文件</span><br><span class="line">build/</span><br><span class="line"># 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</span><br><span class="line">doc/*.txt</span><br></pre></td></tr></table></figure>
+<h4 id="git-add--u--a-.-的区别">git add -u | -A | . 的区别</h4>
+<p>参考自https://blog.csdn.net/return_cc/article/details/78405176</p>
+<ul>
+<li><code>git add .</code>
+会监控工作区的状态树，使用它会把工作时的所有变化提交到暂存区，包括文件内容修改(modified)以及新文件(new)，但不包括被删除的文件，因为被删除的文件已经在工作区不可见</li>
+<li><code>git add -u</code> 他仅监控tracked
+file，他会将被修改的文件提交到暂存区。add -u 不会提交新文件（untracked
+file），但是可以感知被删除的tracked file。</li>
+<li><code>git add -A</code> 是上面两种功能的集合。</li>
+</ul>
+<p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">echo Change me &gt; change-me</span><br><span class="line">echo Delete me &gt; delete-me</span><br><span class="line">git add change-me delete-me</span><br><span class="line">git commit -m initial</span><br><span class="line"></span><br><span class="line">echo OK &gt;&gt; change-me</span><br><span class="line">rm delete-me</span><br><span class="line">echo Add me &gt; add-me</span><br><span class="line">#删除了delete-me文件，修改了change-me文件，新增了add-me文件</span><br><span class="line"></span><br><span class="line">git status</span><br><span class="line"># Changed but not updated:</span><br><span class="line">#   modified:   change-me</span><br><span class="line">#   deleted:    delete-me</span><br><span class="line"># Untracked files:</span><br><span class="line">#   add-me</span><br><span class="line">#其中chane-me文件和delete-me文件是tranched file，add-me文件是未tracked文件</span><br><span class="line">#chang-me和add-me文件是工作区文件，delete-me是非工作区文件</span><br><span class="line"></span><br><span class="line">git add .</span><br><span class="line">git status</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Changes to be committed:</span><br><span class="line">#   new file:   add-me</span><br><span class="line">#   modified:   change-me</span><br><span class="line"># Changed but not updated:</span><br><span class="line">#   deleted:    delete-me</span><br><span class="line"></span><br><span class="line"># git add . 仅能监控工作区文件，所以它可以提交add-me和change-me但是不能提交delete-me</span><br><span class="line"></span><br><span class="line">git reset  #git reset可以重置暂存区的文件使其与上一次的commit保持一致，工作区文件内容保持不变</span><br><span class="line"></span><br><span class="line">git add -u</span><br><span class="line">git status</span><br><span class="line"></span><br><span class="line"># Changes to be committed:</span><br><span class="line">#   modified:   change-me</span><br><span class="line">#   deleted:    delete-me</span><br><span class="line"># Untracked files:</span><br><span class="line">#   add-me</span><br><span class="line"></span><br><span class="line"># git add -u 仅能监控tracked file，所以它可以提交change-me和delete-me但是不能提交add-me </span><br><span class="line"></span><br><span class="line">git reset</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">git add -A</span><br><span class="line">git status</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Changes to be committed:</span><br><span class="line">#   new file:   add-me</span><br><span class="line">#   modified:   change-me</span><br><span class="line">#   deleted:    delete-me</span><br><span class="line"></span><br><span class="line"># git add -A 可以提交所有变化，包括trancked file的变化和工作区的变化</span><br></pre></td></tr></table></figure>
+<h4 id="git删除tracked-file">git删除tracked file</h4>
+<p>https://www.cnblogs.com/zhangmingyan/articles/12099108.html</p>
+<h6 id="git-rm---cached-file">git rm --cached file</h6>
+<p>不删除物理文件，仅将该文件从缓存中删除，可以看作是git
+add的反向操作</p>
+<h4 id="lfs管理大文件">lfs管理大文件</h4>
+<p>查找大小大于1M的文件后缀</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs migrate info --above=&quot;1 MB&quot; --everything --top 10</span><br></pre></td></tr></table></figure>
+<p>追踪指定后缀的文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs migrate import --include=&quot;*.jar,*.pdf&quot; --everything</span><br></pre></td></tr></table></figure>
+<p>确认被track的对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git lfs ls-files </span><br></pre></td></tr></table></figure>
+<p>push全部到远程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin -f --all &amp;&amp; git push origin -f --tags</span><br></pre></td></tr></table></figure>
+<h4 id="git-push">git push</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push &lt;远程主机名&gt; &lt;本地分支名&gt;:&lt;远程分支名&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的冒号前后没有空格</p>
+</blockquote>
+<p>如果省略远程分支名，则表示将本地分支推送与之存在"追踪关系"的远程分支（通常两者同名），如果该远程分支不存在，则会被新建。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+<p>上面命令表示，将本地的master分支推送到origin主机的master分支。如果后者不存在，则会被新建。</p>
+<h4 id="git-push--u-origin-master">git push -u origin master</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git push -u origin master </span><br><span class="line">相当于</span><br><span class="line">git branch --set-upstream-to=origin/master master//将远程仓库origin的master分支与本地仓库master分支关联</span><br><span class="line">加</span><br><span class="line">git push origin master</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="git-reset---hard">git reset --hard</h3>
+<p>强制恢复到上一次commit的状态</p>
+<h4 id="git-clone--b-git_url">git clone -b <branch_name> git_url</h4>
+<p>指定分支进行git clone</p>
+<h4 id="git-checkout-source_branch-...">git checkout source_branch
+<path>...</h4>
+<p>从其他分支merge个别文件</p>
+<p>https://blog.csdn.net/SJZYLC/article/details/49591211</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout remotes/origin/mpi_meeting inference_basler.py </span><br></pre></td></tr></table></figure>
+<h5 id="git-checkout--b">git checkout -b <branch_name>
+<remote_branch_name></h5>
+<p>git
+pull只会拉取远程仓库的master分支，要想在其他分支上进行同步，需要先</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -a </span><br></pre></td></tr></table></figure>
+<p>查看所有分支的分支名字，包括目标远程分支</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b &lt;branch_name&gt; &lt;remote_branch_name&gt;</span><br></pre></td></tr></table></figure>
+<p>再运行上述操作就可以创建一个本地分支（建议和远程分支名字保持一致），同时指定其跟踪对应的远程分支</p>
+<h4 id="遇到bug该怎么办">遇到bug该怎么办</h4>
+<ul>
+<li>创建临时分支bugFix</li>
+<li>在bugFix里面添加调试语句</li>
+<li>修复bug</li>
+<li>删除调试语句</li>
+<li>merge到原来的分支</li>
+</ul>
+<h4 id="git-commit---amend--m-xxx">git commit --amend -m "xxx"</h4>
+<p>https://zhuanlan.zhihu.com/p/340007149</p>
+<h4 id="修改commit提交信息">修改commit提交信息</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git commit --amend</span><br></pre></td></tr></table></figure>
+<h4 id="本地分支跟踪远程分支">本地分支跟踪远程分支</h4>
+<p>查看分支跟踪情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -vv</span><br></pre></td></tr></table></figure>
+<p>输出为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">* basler_mpi_inf b725b14 [origin/basler_mpi_inf] feature: new fps calculation</span><br></pre></td></tr></table></figure>
+<p>将<code>branch-name</code>分支追踪远程分支<code>origin/branch-name</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch --set-upstream branch-name origin/branch-name</span><br></pre></td></tr></table></figure>
+<p>设置当前分支追踪远程分支<code>origin/serverfix</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch -u origin/serverfix</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/" rel="prev" title="git基础操作-大文件管理LFS">
+      <i class="fa fa-chevron-left"></i> git基础操作-大文件管理LFS
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">git commit规范</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%89%E8%A3%85commitizen"><span class="nav-number">1.1.</span> <span class="nav-text">安装Commitizen</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEangular%E8%A7%84%E8%8C%83"><span class="nav-number">1.2.</span> <span class="nav-text">配置Angular规范</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gitignore%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">.gitignore规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-add--u--a-.-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">git add -u | -A | . 的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git%E5%88%A0%E9%99%A4tracked-file"><span class="nav-number">4.</span> <span class="nav-text">git删除tracked file</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#git-rm---cached-file"><span class="nav-number">4.0.1.</span> <span class="nav-text">git rm --cached file</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lfs%E7%AE%A1%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">lfs管理大文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-push"><span class="nav-number">6.</span> <span class="nav-text">git push</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-push--u-origin-master"><span class="nav-number">7.</span> <span class="nav-text">git push -u origin master</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-reset---hard"><span class="nav-number"></span> <span class="nav-text">git reset --hard</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-clone--b-git_url"><span class="nav-number">1.</span> <span class="nav-text">git clone -b  git_url</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-checkout-source_branch-..."><span class="nav-number">2.</span> <span class="nav-text">git checkout source_branch
+...</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-checkout--b"><span class="nav-number">2.1.</span> <span class="nav-text">git checkout -b 
+</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%87%E5%88%B0bug%E8%AF%A5%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">3.</span> <span class="nav-text">遇到bug该怎么办</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-commit---amend--m-xxx"><span class="nav-number">4.</span> <span class="nav-text">git commit --amend -m &quot;xxx&quot;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9commit%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF"><span class="nav-number">5.</span> <span class="nav-text">修改commit提交信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%88%86%E6%94%AF%E8%B7%9F%E8%B8%AA%E8%BF%9C%E7%A8%8B%E5%88%86%E6%94%AF"><span class="nav-number">6.</span> <span class="nav-text">本地分支跟踪远程分支</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigK"
+      src="/uploads/IMG_8485.jpg">
+  <p class="site-author-name" itemprop="name">BigK</p>
+  <div class="site-description" itemprop="description">The world is not a fine place, but worth the fighting for</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BigK</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'o7p9Dib4M1TG87DZSo7a3l8K-gzGzoHsz',
+      appKey     : 'pp3zmuhp6OO8Sy8n9xptgx4M',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
