@@ -20,18 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="The world is not a fine place, but worth the fighting for">
-<meta property="og:type" content="website">
-<meta property="og:title" content="来者可追">
-<meta property="og:url" content="http://example.com/tags/LINUX/index.html">
+  <meta name="description" content="git每次pull和push都需要输入用户名和密码十分的麻烦和浪费时间，好在可以利用ssh密钥来进行git免密登录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh-git免密登录远程代码托管平台">
+<meta property="og:url" content="http://example.com/2023/06/27/ssh-git%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0/index.html">
 <meta property="og:site_name" content="来者可追">
-<meta property="og:description" content="The world is not a fine place, but worth the fighting for">
+<meta property="og:description" content="git每次pull和push都需要输入用户名和密码十分的麻烦和浪费时间，好在可以利用ssh密钥来进行git免密登录。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-27T06:39:42.000Z">
+<meta property="article:modified_time" content="2023-06-27T08:22:54.396Z">
 <meta property="article:author" content="BigK">
-<meta property="article:tag" content="Junwei Zha">
+<meta property="article:tag" content="GIT">
+<meta property="article:tag" content="SSH">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/tags/LINUX/">
+<link rel="canonical" href="http://example.com/2023/06/27/ssh-git%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0/">
 
 
 <script id="page-configurations">
@@ -39,12 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: LINUX | 来者可追</title>
+  <title>ssh-git免密登录远程代码托管平台 | 来者可追</title>
   
 
 
@@ -171,57 +174,126 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/27/ssh-git%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ssh-git免密登录远程代码托管平台
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-27 14:39:42 / 修改时间：16:22:54" itemprop="dateCreated datePublished" datetime="2023-06-27T14:39:42+08:00">2023-06-27</time>
+            </span>
+
+          
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">LINUX
-          <small>标签</small>
-        </h2>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/06/27/ssh-git%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/27/ssh-git%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+        <p><img
+src="../imgs/$%7Bfiilename%7D/github-save-ssh-key-7854040.png" /></p>
+<p>git每次pull和push都需要输入用户名和密码十分的麻烦和浪费时间，好在可以利用ssh密钥来进行git免密登录。</p>
+<span id="more"></span>
+<h3 id="生成ssh钥匙对">生成ssh钥匙对</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t ed25519</span><br></pre></td></tr></table></figure>
+<p>其中<code>ed25519</code>是密钥的名称，可以随便取。一路按下<code>enter</code>进行确认，在<code>~/.ssh</code>目录下将多出两个文件，分别是<code>id_ed25519</code>私钥文件和<code>id_ed25519.pub</code>公钥文件。</p>
+<p>需要注意的是私钥的权限不能过于开放，不能是<code>777</code>这种权限，可以用<code>ls -al</code>检查下它的权限，假如权限不符合预期可以改成<code>600</code>的权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 600 ~/.ssh/id_ed25519</span><br></pre></td></tr></table></figure>
+<h3 id="上传公钥到远程代码托管平台">上传公钥到远程代码托管平台</h3>
+<p>以github为例</p>
+<p><img
+src="../imgs/$%7Bfiilename%7D/github-save-ssh-key-7854040.png" /></p>
+<h3 id="配置本地的配置文件">配置本地的配置文件</h3>
+<p>一共需要配置两个配置文件，一个是<code>~/.ssh/config</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Host github.com #名称任取</span><br><span class="line">HostName github.com</span><br><span class="line">User git</span><br><span class="line">Port 22</span><br><span class="line">IdentityFile /root/.ssh/id_ed25519</span><br></pre></td></tr></table></figure>
+<p>一个是<code>~/.gitconfig</code>，在其文件底部加入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[url &quot;ssh://git@github.com/&quot;]</span><br><span class="line">        insteadOf = https://github.com/</span><br></pre></td></tr></table></figure>
+<p>除了可以手动加入，也可以用命令行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global url.ssh://git@github.com/.insteadOf https://github.com/</span><br></pre></td></tr></table></figure>
+<p>这行命令可以使得访问<code>github.com</code>都是走SSH而非HTTPS。</p>
+<blockquote>
+<p>对于工蜂平台而言，需要有</p>
+<p><code>git config --global url.git@git.woa.com:.insteadOf https://git.woa.com/</code></p>
+</blockquote>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2023-06-26T19:46:23+08:00"
-              content="2023-06-26">
-          06-26
-        </time>
-      </div>
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GIT/" rel="tag"># GIT</a>
+              <a href="/tags/SSH/" rel="tag"># SSH</a>
+          </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/06/26/ssh-%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8/" itemprop="url">
-            <span itemprop="name">ssh 免密登录远程服务器</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/06/26/%E7%A7%9F%E6%88%BF-%E8%B8%A9%E5%9D%91/" rel="prev" title="租房-踩坑">
+      <i class="fa fa-chevron-left"></i> 租房-踩坑
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -268,6 +340,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90ssh%E9%92%A5%E5%8C%99%E5%AF%B9"><span class="nav-number">1.</span> <span class="nav-text">生成ssh钥匙对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%85%AC%E9%92%A5%E5%88%B0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%98%E7%AE%A1%E5%B9%B3%E5%8F%B0"><span class="nav-number">2.</span> <span class="nav-text">上传公钥到远程代码托管平台</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">配置本地的配置文件</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
