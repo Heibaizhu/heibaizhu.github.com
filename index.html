@@ -177,6 +177,501 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/" class="post-title-link" itemprop="url">高斯水溅Gaussian Splatting中的数学</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-19 00:25:21 / 修改时间：00:29:13" itemprop="dateCreated datePublished" datetime="2024-01-19T00:25:21+08:00">2024-01-19</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <span id="more"></span>
+<h3 id="学习任意高斯分布">学习任意高斯分布</h3>
+<p>在《3D Gaussian Splatting for Real-Time Radiance Field
+Rendering》中，作者通过神经网络来学习3元高斯函数的协方差，并将其协方差定义为缩放矩阵和旋转矩阵两部份
+<span class="math display">\[
+\Sigma = RSS^TR^T
+\]</span> 其中，<span class="math inline">\(R\)</span>和<span
+class="math inline">\(S\)</span>分别是旋转矩阵和放缩矩阵。</p>
+<p>为什么协方差矩阵可以拆解乘这两部份呢？这是因为<strong>任意正态分布可以看作对一个标准正态分布先进行放缩，然后再进行旋转，最后移动到均值处得到</strong>，后面的章节将对这一结论进行代数和几何上的解释。</p>
+<blockquote>
+<p>To allow independent optimization of both factors, we store them
+separately: a 3D vector 𝑠 for scaling and a quaternion 𝑞 to represent
+rotation. These can be trivially converted to their respective matrices
+and combined, making sure to normalize 𝑞 to obtain a valid unit
+quaternion.</p>
+</blockquote>
+<p><span class="math inline">\(R\)</span>是一个<span
+class="math inline">\(3 \times
+3\)</span>大小的矩阵，但是作者没有选择直接用神经网络回归这9个变量，因为旋转矩阵虽然是<span
+class="math inline">\(3 \times
+3\)</span>大小，但是实际的自由度仅有3个（分别表示沿x、y、z轴旋转的角度）。所以，作者选择用回归四元数来方式来学习旋转矩阵。
+<span class="math display">\[
+q = (\cos{\theta}, u_x\sin{\theta}, u_y\sin{\theta},u_z\sin{\theta}) \\
+||q||=1
+\]</span></p>
+<p>四元数也有四个变量，但是其模长为1，所以仅有三个变量。你可能要问了，那为什么不直接用仅有三个变量的欧拉角来回归呢？这是因为欧拉角这种表示旋转的方式存在天然的缺陷，可能会遇到死锁问题。至于死锁问题就不在本文的讨论范围内了。</p>
+<h3 id="定义">定义</h3>
+<p>多元正态分布<span class="math inline">\(X \sim
+\mathcal{N}(\mathbf{\mu},
+\mathbf{\Sigma})\)</span>的概率密度函数可以表示为 <span
+class="math display">\[
+f_x(x_1,
+...,x_k)=\frac{1}{\sqrt{(2\pi)^k|\Sigma|}}e^{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)}
+\]</span> 其中默认情况下向量都是列向量，所以<span
+class="math inline">\(x,\mu \in R^{k\times1}\)</span>,<span
+class="math inline">\(\Sigma \in R^{k\times k}\)</span>, <span
+class="math inline">\(|\Sigma|\)</span>为协方差矩阵的行列式。 <span
+class="math display">\[
+\mu = E(X) \\
+\Sigma = E((X-E(X))(X-E(X))^T)
+\]</span> 从定义式可知，对原分布做一个变换<span
+class="math inline">\(X&#39;=TX\)</span>，则其均值和方差的变化为 <span
+class="math display">\[
+\mu&#39;=E(TX)=TE(x)=T\mu  \\
+\Sigma&#39;=E((TX-E(TX))(TX-E(TX))^T)=T\Sigma T^T
+\]</span>
+多元正态分布比较抽象，我们以二元正态分布为例比较直观。对于二元正态分布而言，其协方差矩阵可以写成:
+<span class="math display">\[
+\Sigma = \left[
+\begin{matrix}
+\sigma(x, x) &amp; \sigma(x, y) \\
+\sigma(y, x) &amp; \sigma(y, y)
+\end{matrix}
+\right]
+\]</span> 由于<span class="math inline">\(\sigma(x, y)=\sigma(y,
+x)\)</span>所以，协方差矩阵是实对称矩阵。</p>
+<blockquote>
+<p>实对称矩阵:如果有n阶矩阵A，其矩阵元素都是实数，且矩阵A的转置等于其本身，即<span
+class="math inline">\(A^T=A\)</span>，则矩阵A为实对称矩阵</p>
+</blockquote>
+<blockquote>
+<p>正交矩阵：如果有n阶矩阵A，其行向量和列向量皆是相互正交的单位向量，则A为正交矩阵，此时有<span
+class="math inline">\(A^{-1}=A^T\)</span></p>
+</blockquote>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<h3
+id="正态分布可以由标准正态分布变换而来">正态分布可以由标准正态分布变换而来</h3>
+<p>对于简单的一元正态分布而言，标准正态分布是指均值为<span
+class="math inline">\(\mu=0\)</span>，方差为<span
+class="math inline">\(\sigma=1\)</span>的正态分布，即<span
+class="math inline">\(X_0 \sim \mathcal{N}(0,
+1)\)</span>。要得到任意正态分布分布<span class="math inline">\(X \sim
+\mathcal{N}(\mu,
+\sigma^2)\)</span>只需要对原分布进行线性操作，这是我们比较容易理解的部分。
+<span class="math display">\[
+X = \sigma X_0 + \mu    \\
+\mu = \mathbf{0} + \mu  \\
+\sigma = \sigma \mathbf{I}
+\]</span> 对于二元正态分布而言，标准正态分布是指均值<span
+class="math inline">\(\mu=[0, 0]^T\)</span>，协方差为<span
+class="math inline">\(\Sigma = \left[ \begin{matrix} 1 &amp; 0 \\ 0
+&amp; 1 \end{matrix} \right]\)</span> 即，即<span
+class="math inline">\(X_0 \sim \mathcal{N}(\mathbf{0},
+\mathbf{I})\)</span>。要得到任意正态分布<span class="math inline">\(X
+\sim \mathcal{N}(\mathbf\mu,
+\mathbf{\Sigma})\)</span>，需要对其均值和协方差做变换。均值的变换比较好做，对分布作<span
+class="math inline">\(X_0+\mathbf{\mu}\)</span>加减可以直接反应到均值上，但是对协方差不能再简单的乘一个变换系数了，因为单位向量乘以任何系数只会变成对角矩阵，而不能表示任意实对称矩阵。</p>
+<p>由式3可知，<span class="math inline">\(X&#39;=TX, \Sigma&#39;=T\Sigma
+T^T\)</span>，所以我们只需要对任意协方差矩阵做对角化即可知道该对标准正态分布做什么变换<span
+class="math inline">\(T\)</span>。对<span
+class="math inline">\(\Sigma\)</span>进行对角化， <span
+class="math display">\[
+\Sigma = U\Lambda U^{-1}
+\]</span> 其中<span
+class="math inline">\(\Lambda\)</span>为其特征值矩阵，<span
+class="math inline">\(U\)</span>为对应的单位特征向量的列组成的矩阵其可以进一步写成一个放缩矩阵乘以一个旋转矩阵，即<span
+class="math inline">\(T=RS\)</span>。 <span class="math display">\[
+\Sigma = U\Lambda U^{-1} = (RS)(RS)^T
+\]</span>
+这是由于<strong>协方差矩阵是半正定的实对称矩阵</strong>，因此有<span
+class="math inline">\(U^{-1}=U^T\)</span>，且<span
+class="math inline">\(|U|\ge0\)</span>，且<span
+class="math inline">\(U\)</span>为正交矩阵。行列式为1的正交矩阵可以表示为一个旋转矩阵，因此有
+<span class="math display">\[
+\Sigma = U\Lambda U^T = R \Lambda R^T=RS(SR)^T
+\]</span></p>
+<p>因此，<strong>任意正态分布可以看作对一个标准正态分布先进行放缩，然后再进行旋转，最后移动到均值处得到。</strong>即
+<span class="math display">\[
+X = RSX_0+\mu
+\]</span></p>
+<blockquote>
+<p>正交矩阵可以分为两类，一类就是旋转变换矩阵，一类是镜像变换矩阵</p>
+</blockquote>
+<h3 id="几何理解">几何理解</h3>
+<p>从图形的角度也可以得到这个结果，对于二元标准正态分布而言，它的图像如下：</p>
+<figure>
+<img src="../../../source/imgs/$%7Bfiilename%7D/whiteneddata.png"
+alt="whiteneddata" />
+<figcaption aria-hidden="true">whiteneddata</figcaption>
+</figure>
+<p>当把协方差矩阵从单位矩阵变成对角矩阵时相当于对其两侧(x轴和y轴)方向进行了拉伸：</p>
+<figure>
+<img src="../imgs/$%7Bfiilename%7D/eigenvectors-5595319.png"
+alt="eigenvectors" />
+<figcaption aria-hidden="true">eigenvectors</figcaption>
+</figure>
+<p>下图为协方差矩阵为<span class="math inline">\(\left[ \begin{matrix} 5
+&amp; 4 \\ 4 &amp; 6 \end{matrix}
+\right]\)</span>的二元正态分布样本图，直观上来看我们只需要进一步对上述的协方差矩阵为对角矩阵的正态分布样本进行一个旋转操作就可以表示任意的二元正态分布了。</p>
+<figure>
+<img src="../imgs/$%7Bfiilename%7D/transformeddata-5595343.png"
+alt="transformeddata" />
+<figcaption aria-hidden="true">transformeddata</figcaption>
+</figure>
+<h3 id="矩阵论拾遗">矩阵论拾遗</h3>
+<blockquote>
+<p>实对称矩阵:如果有n阶矩阵A，其矩阵元素都是实数，且矩阵A的转置等于其本身，即<span
+class="math inline">\(A^T=A\)</span>，则矩阵A为实对称矩阵</p>
+</blockquote>
+<blockquote>
+<p>正交矩阵：如果有n阶矩阵A，其行向量和列向量皆是相互正交的单位向量，则A为正交矩阵，此时有<span
+class="math inline">\(A^{-1}=A^T\)</span></p>
+</blockquote>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>皆有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<blockquote>
+<p>实对称矩阵的特征向量相互正交</p>
+</blockquote>
+<p>证明： <span class="math display">\[
+给定一个n维实对称矩阵A满足Ax_1=\lambda_1x_1,
+Ax_2=\lambda_2x_2,且\lambda_1\not=\lambda \\
+对于
+Ax_1=\lambda_1x_1,两边转置有x_1^TA^T=\lambda_1x_1^T，两侧都右乘x_2，得到
+\\
+x_1^TA^Tx_2=\lambda_1x_1^Tx_2,由于A^T=A，得到 \\
+\lambda_2x_1^Tx_2=\lambda_1x_1^Tx_2 \\
+由于\lambda_1 \not= \lambda_2 所以得到x_1^Tx_2=0，故得证
+\]</span></p>
+<p><strong>性质：协方差矩阵为半正定矩阵</strong></p>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<p>协方差矩阵定义： <span class="math display">\[
+\Sigma = E[(x-E(x))(x-E(x))^T]
+\]</span> 对任意非零向量<span class="math inline">\(u\in R^{1 \times
+n}\)</span>： <span class="math display">\[
+u\Sigma u^T = uE[(x-E(x))(x-E(x))^T]u^T \\=E[u(x-E(x))(x-E(x))^Tu^T]
+\\=E[u(x-E(x))[u(x-E(x))]^T) \\ =E(X&#39;X&#39;^T) \ge 0
+\]</span></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-15 14:59:49" itemprop="dateCreated datePublished" datetime="2024-01-15T14:59:49+08:00">2024-01-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-17 15:06:05" itemprop="dateModified" datetime="2024-01-17T15:06:05+08:00">2024-01-17</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="通过ssh终端连接">通过ssh终端连接</h3>
+<p>mac安装<a target="_blank" rel="noopener" href="https://www.xquartz.org/">XQuartz</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install --cask xquartz</span><br></pre></td></tr></table></figure>
+<p>登陆远程服务器，确保<code>ForwardAgent</code>、<code>ForwardX11</code>、<code>ForwardX11Trusted</code>设置为yes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ssh/ssh_config  </span><br><span class="line">service ssh restart #重启</span><br></pre></td></tr></table></figure>
+<h3 id="在vscode端">在Vscode端</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Host remote_server</span><br><span class="line">  HostName x.x.xx.xx</span><br><span class="line">  Port 36000</span><br><span class="line">  User root</span><br><span class="line">  IdentityFile ~/.ssh/id_rsa</span><br><span class="line">  ForwardX11 yes</span><br><span class="line">  ForwardX11Trusted yes</span><br><span class="line">  ForwardAgent yes</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" class="post-title-link" itemprop="url">ssh内网穿透</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-08-16 20:20:53 / 修改时间：21:42:59" itemprop="dateCreated datePublished" datetime="2023-08-16T20:20:53+08:00">2023-08-16</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>SSH 反向隧道（Reverse SSH Tunneling）是一种在防火墙或
+NAT（网络地址转换）限制下实现远程访问的技术。通过建立反向隧道，可以让外部计算机访问位于私有网络中的计算机，而无需在防火墙上打开端口，从而实现内网穿透。这也是最简单的一种内网穿透方式。</p>
+<p><img src="../imgs/$%7Bfiilename%7D/image-20230816205926326.png" alt="image-20230816205926326" style="zoom:50%;" /></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/16/Diffusion-Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/08/16/Diffusion-Model/" class="post-title-link" itemprop="url">Diffusion Model</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-08-16 15:13:45 / 修改时间：15:13:58" itemprop="dateCreated datePublished" datetime="2023-08-16T15:13:45+08:00">2023-08-16</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/08/16/Diffusion-Model/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/08/16/Diffusion-Model/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>“The sculpture is already complete within the marble block, before I
+start my work. <strong>It is already there.</strong> <strong>I just have
+to chisel away the superfluous material</strong>.” I'd heard
+Michelangelo's famous quote before. - <strong>Michelangelo</strong></p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/25/%E6%9E%81%E7%BA%BF%E7%BA%A6%E6%9D%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -208,7 +703,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 10:35:56" itemprop="dateModified" datetime="2023-07-26T10:35:56+08:00">2023-07-26</time>
+                <time title="修改时间：2024-01-03 14:41:19" itemprop="dateModified" datetime="2024-01-03T14:41:19+08:00">2024-01-03</time>
               </span>
 
           
@@ -299,7 +794,7 @@ Wikipedia</figcaption>
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 10:40:34" itemprop="dateModified" datetime="2023-07-26T10:40:34+08:00">2023-07-26</time>
+                <time title="修改时间：2024-01-03 14:46:43" itemprop="dateModified" datetime="2024-01-03T14:46:43+08:00">2024-01-03</time>
               </span>
 
           
@@ -718,367 +1213,11 @@ alt="常用Git 命令清单- 阮一峰的网络日志" />
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
-      <meta itemprop="name" content="BigK">
-      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="来者可追">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/" class="post-title-link" itemprop="url">git基础操作-大文件管理LFS</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-09 15:32:38" itemprop="dateCreated datePublished" datetime="2023-06-09T15:32:38+08:00">2023-06-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 10:32:41" itemprop="dateModified" datetime="2023-07-26T10:32:41+08:00">2023-07-26</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <figure>
-<img src="../imgs/$%7Bfiilename%7D/graphic.gif"
-alt="a diagram showing how Git LFS works" />
-<figcaption aria-hidden="true">a diagram showing how Git LFS
-works</figcaption>
-</figure>
-<p>Git LFS（Large File
-Storage）是一种Git扩展，用于处理大文件存储问题。它允许Git仓库内更有效地管理和追踪大文件，如图像、音频、视频和数据集等，而无需在仓库中储存这些庞大的二进制文件。Git
-LFS通过代替大文件存储指针，将这些大文件存放在单独的服务器上。当克隆或检出特定版本时，Git
-LFS将自动下载替换对应的大文件。</p>
-<p>传统的Git处理方式主要针对源代码和小型文件。当在仓库中保存大文件并提交许多变更时，可能影响克隆、拉取和推送操作的性能。Git
-LFS解决了这个问题，使在不影响操作性能的情况下存储和跟踪大文件。</p>
-<p>使用Git LFS的主要优点包括：</p>
-<ol type="1">
-<li><strong>性能改善</strong>：通过分离大文件和源代码管理，降低仓库克隆和拉取等操作处理时间。</li>
-<li><strong>有效存储</strong>：减少由于频繁存储大文件变化带来的仓库空间消耗。</li>
-<li><strong>简化工作流程</strong>：无需修改您使用Git的方式，只需一次简单的设置，即可自动处理大文件。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/09/git%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C-%E5%A4%A7%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86LFS/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
-      <meta itemprop="name" content="BigK">
-      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="来者可追">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/" class="post-title-link" itemprop="url">程序员日常必备快捷键</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-02 16:22:18" itemprop="dateCreated datePublished" datetime="2023-06-02T16:22:18+08:00">2023-06-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 10:32:53" itemprop="dateModified" datetime="2023-07-26T10:32:53+08:00">2023-07-26</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>日常中掌握一些快捷键可以大大增加工作效率，并减少一些简单但重要的错误。熟用快捷键已然成为程序员的基本功之一，其基本思想我觉得就是”能不用鼠标就不用鼠标“。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/02/%E7%A8%8B%E5%BA%8F%E5%91%98%E6%97%A5%E5%B8%B8%E5%BF%85%E5%A4%87%E5%BF%AB%E6%8D%B7%E9%94%AE/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/31/open3d_io/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
-      <meta itemprop="name" content="BigK">
-      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="来者可追">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/31/open3d_io/" class="post-title-link" itemprop="url">OPEN3D_IO</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-31 17:00:58" itemprop="dateCreated datePublished" datetime="2023-05-31T17:00:58+08:00">2023-05-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 10:32:46" itemprop="dateModified" datetime="2023-07-26T10:32:46+08:00">2023-07-26</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/31/open3d_io/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/31/open3d_io/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Open3D提供了三种数据结构：</p>
-<ul>
-<li>点云 (point cloud)</li>
-<li>网格 (mesh)</li>
-<li>RGB-D图像</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/31/open3d_io/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
-      <meta itemprop="name" content="BigK">
-      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="来者可追">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">搭建博客</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-31 17:00:58" itemprop="dateCreated datePublished" datetime="2023-05-31T17:00:58+08:00">2023-05-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-04 16:21:26" itemprop="dateModified" datetime="2023-06-04T16:21:26+08:00">2023-06-04</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/31/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1145,12 +1284,12 @@ LFS解决了这个问题，使在不影响操作性能的情况下存储和跟�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -1177,14 +1316,33 @@ LFS解决了这个问题，使在不影响操作性能的情况下存储和跟�
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">BigK</span>
 </div>
-
         
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 

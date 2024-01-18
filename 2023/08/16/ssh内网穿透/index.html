@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="SSH 反向隧道（Reverse SSH Tunneling）是一种在防火墙或 NAT（网络地址转换）限制下实现远程访问的技术。通过建立反向隧道，可以让外部计算机访问位于私有网络中的计算机，而无需在防火墙上打开端口，从而实现内网穿透。这也是最简单的一种内网穿透方式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh内网穿透">
+<meta property="og:url" content="http://example.com/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/index.html">
+<meta property="og:site_name" content="来者可追">
+<meta property="og:description" content="SSH 反向隧道（Reverse SSH Tunneling）是一种在防火墙或 NAT（网络地址转换）限制下实现远程访问的技术。通过建立反向隧道，可以让外部计算机访问位于私有网络中的计算机，而无需在防火墙上打开端口，从而实现内网穿透。这也是最简单的一种内网穿透方式。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/16/imgs/$%7Bfiilename%7D/image-20230816205926326.png">
+<meta property="og:image" content="http://example.com/2023/08/16/imgs/$%7Bfiilename%7D/image-20230816210002440.png">
+<meta property="og:image" content="http://example.com/2023/08/16/imgs/$%7Bfiilename%7D/image-20230816205926326.png">
+<meta property="article:published_time" content="2023-08-16T12:20:53.000Z">
+<meta property="article:modified_time" content="2023-08-16T13:42:59.911Z">
+<meta property="article:author" content="BigK">
+<meta property="article:tag" content="SSH">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/16/imgs/$%7Bfiilename%7D/image-20230816205926326.png">
+
+<link rel="canonical" href="http://example.com/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ssh内网穿透 | 来者可追</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">来者可追</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ssh内网穿透
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-08-16 20:20:53 / 修改时间：21:42:59" itemprop="dateCreated datePublished" datetime="2023-08-16T20:20:53+08:00">2023-08-16</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/08/16/ssh%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>SSH 反向隧道（Reverse SSH Tunneling）是一种在防火墙或
+NAT（网络地址转换）限制下实现远程访问的技术。通过建立反向隧道，可以让外部计算机访问位于私有网络中的计算机，而无需在防火墙上打开端口，从而实现内网穿透。这也是最简单的一种内网穿透方式。</p>
+<p><img src="../imgs/$%7Bfiilename%7D/image-20230816205926326.png" alt="image-20230816205926326" style="zoom:50%;" /></p>
+<span id="more"></span>
+<h3 id="内网穿透">内网穿透</h3>
+<p>家里有一台新配的服务器A，但是这台服务器连接的wifi位于内网中，没有独立的公网IP地址，这样不在这个内网内的计算机和手机不能直接访问这台服务器。当我不在家的时候又想登录这台服务器就需要用到内网穿透。</p>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 15%" />
+<col style="width: 6%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>网络设备</th>
+<th>IP</th>
+<th>用户名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>192.168.2.105</td>
+<td>bigk</td>
+<td>位于内网的目标服务器（如家里的服务器），linux系统</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>43.156.188.229</td>
+<td>root</td>
+<td>公网服务器，有独立公网IP，用来转发连接，如腾讯云和阿里云的云服务器，linux系统</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>x.x.x.x</td>
+<td>x</td>
+<td>任意可以访问公网的网络设备，位于内网，比如个人的mac</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>其中'192.168.2.105'和'43.156.188.229'均为杜撰</p>
+</blockquote>
+<p>默认情况下，这三个网络设备的互通关系如图所示，位于内网的设备A和设备C可以访问公网设备B，但是位于不同内网的设备间不能访问，即设备C默认访问不了目标服务器A。</p>
+<p><img src="../imgs/$%7Bfiilename%7D/image-20230816210002440.png" alt="image-20230816210002440" style="zoom:50%;" /></p>
+<p>由于服务器A可以访问服务器B，可以利用ssh反向隧道技术，让服务器A交出控制权给服务器B，然后设备C即可通过操纵服务器B来操纵服务器A，原理如图所示。</p>
+<p><img src="../imgs/$%7Bfiilename%7D/image-20230816205926326.png" alt="image-20230816205926326" style="zoom:50%;" /></p>
+<h3 id="实现">实现</h3>
+<h6 id="建立ssh反向隧道">建立ssh反向隧道</h6>
+<p>在服务器A的终端上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -lroot -p22 -qngfNTR 8822:localhost:22 43.156.188.229 -o ServerAliveInterval=10</span><br></pre></td></tr></table></figure>
+<p>此时，需要输入root@43.156.188.229的密码。该命令可以实现将服务器B的8822端口（这个端口可以任意设置）映射到服务器A的22端口（ssh默认端口），这样其他人访问服务器B的8822端口就相当于访问服务器A的22端口，具体参数含义为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">-lroot：指定登录远程服务器的用户名为root。</span><br><span class="line">-p22：指定连接到远程服务器的SSH端口为22。</span><br><span class="line">-qngfN：这是一组SSH选项。</span><br><span class="line">-q：静默模式，减少输出信息。</span><br><span class="line">-n：不分配伪终端，用于在后台运行。</span><br><span class="line">-g：允许远程主机连接到本地转发的端口。</span><br><span class="line">-f：在后台运行SSH会话。</span><br><span class="line">-N：不执行远程命令，仅用于端口转发。</span><br><span class="line">T：禁用伪终端分配。</span><br><span class="line">R：设置反向（远程）端口转发。</span><br><span class="line">8822:localhost:22：将远程服务器的8822端口映射到本地服务器的22端口。</span><br><span class="line">43.156.188.229：远程服务器的IP地址。</span><br><span class="line">-o ServerAliveInterval=10：设置SSH连接保活间隔为10秒，以防止连接超时断开。</span><br></pre></td></tr></table></figure>
+<h6 id="远程连接内网服务器">远程连接内网服务器</h6>
+<p>在设备C上运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 8822 bigk@43.156.188.229</span><br></pre></td></tr></table></figure>
+<p>输入服务器A的密码，即可连接上服务器A</p>
+<h6 id="配置免密登录">配置免密登录</h6>
+<p>在上述过程中存在两次输入密码登录的过程，十分麻烦也不安全，更方便的方式是通过配置ssh密钥登录，配置方式查看往期博客"ssh
+免密登录远程服务器"。</p>
+<p>首先，假如本地没有现成的公钥和私钥，需要先在本地生成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<p>这将在<code>~/.ssh</code>文件夹下产生私钥<code>id_rsa</code>和公钥<code>id_rsa.pub</code>，持有私钥的电脑可以免密登录登记对应私钥的电脑，所以我们要把公钥传送到目标服务器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id [-p port] username@remote-server-ip</span><br></pre></td></tr></table></figure>
+<p>具体而言，我们需要在设备C上产生的公钥分别登记到服务器B和服务器A上：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-copy-id -p 22 43.156.188.229  #传到服务器B</span><br><span class="line">ssh-copy-id -p 8822 bigk@43.156.188.229 #传到服务器A</span><br></pre></td></tr></table></figure>
+<p>接下来，我们需要配置<code>~/.ssh/config</code>来指定用私钥来免密登录持有对应公钥的远程服务器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Host TencentCloud </span><br><span class="line">    HostName 43.156.188.229</span><br><span class="line">    Port 22</span><br><span class="line">    User root</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line">Host Home</span><br><span class="line">    HostName 43.154.158.229</span><br><span class="line">    User bigk</span><br><span class="line">    Port 8822</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br></pre></td></tr></table></figure>
+<p>配置完成后，就可以用远程服务器的别名来很方便的免密登录远程服务器了！</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh TencentCloud #免密登录远程服务器B</span><br><span class="line">ssh Home #免密登录远程服务器A</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SSH/" rel="tag"># SSH</a>
+              <a href="/tags/Network/" rel="tag"># Network</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/16/Diffusion-Model/" rel="prev" title="Diffusion Model">
+      <i class="fa fa-chevron-left"></i> Diffusion Model
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="nav-number">1.</span> <span class="nav-text">内网穿透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8Bssh%E5%8F%8D%E5%90%91%E9%9A%A7%E9%81%93"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">建立ssh反向隧道</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E5%86%85%E7%BD%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">远程连接内网服务器</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">配置免密登录</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigK"
+      src="/uploads/IMG_8485.jpg">
+  <p class="site-author-name" itemprop="name">BigK</p>
+  <div class="site-description" itemprop="description">The world is not a fine place, but worth the fighting for</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BigK</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'o7p9Dib4M1TG87DZSo7a3l8K-gzGzoHsz',
+      appKey     : 'pp3zmuhp6OO8Sy8n9xptgx4M',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>

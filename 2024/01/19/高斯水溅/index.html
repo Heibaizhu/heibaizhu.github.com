@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="学习任意高斯分布 在《3D Gaussian Splatting for Real-Time Radiance Field Rendering》中，作者通过神经网络来学习3元高斯函数的协方差，并将其协方差定义为缩放矩阵和旋转矩阵两部份 \[ \Sigma &#x3D; RSS^TR^T \] 其中，\(R\)和\(S\)分别是旋转矩阵和放缩矩阵。 为什么协方差矩阵可以拆解乘这两部份呢？这是因为任意正态分布">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高斯水溅Gaussian Splatting中的数学">
+<meta property="og:url" content="http://example.com/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/index.html">
+<meta property="og:site_name" content="来者可追">
+<meta property="og:description" content="学习任意高斯分布 在《3D Gaussian Splatting for Real-Time Radiance Field Rendering》中，作者通过神经网络来学习3元高斯函数的协方差，并将其协方差定义为缩放矩阵和旋转矩阵两部份 \[ \Sigma &#x3D; RSS^TR^T \] 其中，\(R\)和\(S\)分别是旋转矩阵和放缩矩阵。 为什么协方差矩阵可以拆解乘这两部份呢？这是因为任意正态分布">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/source/imgs/$%7Bfiilename%7D/whiteneddata.png">
+<meta property="og:image" content="http://example.com/2024/01/19/imgs/$%7Bfiilename%7D/eigenvectors-5595319.png">
+<meta property="og:image" content="http://example.com/2024/01/19/imgs/$%7Bfiilename%7D/transformeddata-5595343.png">
+<meta property="article:published_time" content="2024-01-18T16:25:21.000Z">
+<meta property="article:modified_time" content="2024-01-18T16:29:13.568Z">
+<meta property="article:author" content="BigK">
+<meta property="article:tag" content="Junwei Zha">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/source/imgs/$%7Bfiilename%7D/whiteneddata.png">
+
+<link rel="canonical" href="http://example.com/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>高斯水溅Gaussian Splatting中的数学 | 来者可追</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">来者可追</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/IMG_8485.jpg">
+      <meta itemprop="name" content="BigK">
+      <meta itemprop="description" content="The world is not a fine place, but worth the fighting for">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="来者可追">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高斯水溅Gaussian Splatting中的数学
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-19 00:25:21 / 修改时间：00:29:13" itemprop="dateCreated datePublished" datetime="2024-01-19T00:25:21+08:00">2024-01-19</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/19/%E9%AB%98%E6%96%AF%E6%B0%B4%E6%BA%85/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <span id="more"></span>
+<h3 id="学习任意高斯分布">学习任意高斯分布</h3>
+<p>在《3D Gaussian Splatting for Real-Time Radiance Field
+Rendering》中，作者通过神经网络来学习3元高斯函数的协方差，并将其协方差定义为缩放矩阵和旋转矩阵两部份
+<span class="math display">\[
+\Sigma = RSS^TR^T
+\]</span> 其中，<span class="math inline">\(R\)</span>和<span
+class="math inline">\(S\)</span>分别是旋转矩阵和放缩矩阵。</p>
+<p>为什么协方差矩阵可以拆解乘这两部份呢？这是因为<strong>任意正态分布可以看作对一个标准正态分布先进行放缩，然后再进行旋转，最后移动到均值处得到</strong>，后面的章节将对这一结论进行代数和几何上的解释。</p>
+<blockquote>
+<p>To allow independent optimization of both factors, we store them
+separately: a 3D vector 𝑠 for scaling and a quaternion 𝑞 to represent
+rotation. These can be trivially converted to their respective matrices
+and combined, making sure to normalize 𝑞 to obtain a valid unit
+quaternion.</p>
+</blockquote>
+<p><span class="math inline">\(R\)</span>是一个<span
+class="math inline">\(3 \times
+3\)</span>大小的矩阵，但是作者没有选择直接用神经网络回归这9个变量，因为旋转矩阵虽然是<span
+class="math inline">\(3 \times
+3\)</span>大小，但是实际的自由度仅有3个（分别表示沿x、y、z轴旋转的角度）。所以，作者选择用回归四元数来方式来学习旋转矩阵。
+<span class="math display">\[
+q = (\cos{\theta}, u_x\sin{\theta}, u_y\sin{\theta},u_z\sin{\theta}) \\
+||q||=1
+\]</span></p>
+<p>四元数也有四个变量，但是其模长为1，所以仅有三个变量。你可能要问了，那为什么不直接用仅有三个变量的欧拉角来回归呢？这是因为欧拉角这种表示旋转的方式存在天然的缺陷，可能会遇到死锁问题。至于死锁问题就不在本文的讨论范围内了。</p>
+<h3 id="定义">定义</h3>
+<p>多元正态分布<span class="math inline">\(X \sim
+\mathcal{N}(\mathbf{\mu},
+\mathbf{\Sigma})\)</span>的概率密度函数可以表示为 <span
+class="math display">\[
+f_x(x_1,
+...,x_k)=\frac{1}{\sqrt{(2\pi)^k|\Sigma|}}e^{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)}
+\]</span> 其中默认情况下向量都是列向量，所以<span
+class="math inline">\(x,\mu \in R^{k\times1}\)</span>,<span
+class="math inline">\(\Sigma \in R^{k\times k}\)</span>, <span
+class="math inline">\(|\Sigma|\)</span>为协方差矩阵的行列式。 <span
+class="math display">\[
+\mu = E(X) \\
+\Sigma = E((X-E(X))(X-E(X))^T)
+\]</span> 从定义式可知，对原分布做一个变换<span
+class="math inline">\(X&#39;=TX\)</span>，则其均值和方差的变化为 <span
+class="math display">\[
+\mu&#39;=E(TX)=TE(x)=T\mu  \\
+\Sigma&#39;=E((TX-E(TX))(TX-E(TX))^T)=T\Sigma T^T
+\]</span>
+多元正态分布比较抽象，我们以二元正态分布为例比较直观。对于二元正态分布而言，其协方差矩阵可以写成:
+<span class="math display">\[
+\Sigma = \left[
+\begin{matrix}
+\sigma(x, x) &amp; \sigma(x, y) \\
+\sigma(y, x) &amp; \sigma(y, y)
+\end{matrix}
+\right]
+\]</span> 由于<span class="math inline">\(\sigma(x, y)=\sigma(y,
+x)\)</span>所以，协方差矩阵是实对称矩阵。</p>
+<blockquote>
+<p>实对称矩阵:如果有n阶矩阵A，其矩阵元素都是实数，且矩阵A的转置等于其本身，即<span
+class="math inline">\(A^T=A\)</span>，则矩阵A为实对称矩阵</p>
+</blockquote>
+<blockquote>
+<p>正交矩阵：如果有n阶矩阵A，其行向量和列向量皆是相互正交的单位向量，则A为正交矩阵，此时有<span
+class="math inline">\(A^{-1}=A^T\)</span></p>
+</blockquote>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<h3
+id="正态分布可以由标准正态分布变换而来">正态分布可以由标准正态分布变换而来</h3>
+<p>对于简单的一元正态分布而言，标准正态分布是指均值为<span
+class="math inline">\(\mu=0\)</span>，方差为<span
+class="math inline">\(\sigma=1\)</span>的正态分布，即<span
+class="math inline">\(X_0 \sim \mathcal{N}(0,
+1)\)</span>。要得到任意正态分布分布<span class="math inline">\(X \sim
+\mathcal{N}(\mu,
+\sigma^2)\)</span>只需要对原分布进行线性操作，这是我们比较容易理解的部分。
+<span class="math display">\[
+X = \sigma X_0 + \mu    \\
+\mu = \mathbf{0} + \mu  \\
+\sigma = \sigma \mathbf{I}
+\]</span> 对于二元正态分布而言，标准正态分布是指均值<span
+class="math inline">\(\mu=[0, 0]^T\)</span>，协方差为<span
+class="math inline">\(\Sigma = \left[ \begin{matrix} 1 &amp; 0 \\ 0
+&amp; 1 \end{matrix} \right]\)</span> 即，即<span
+class="math inline">\(X_0 \sim \mathcal{N}(\mathbf{0},
+\mathbf{I})\)</span>。要得到任意正态分布<span class="math inline">\(X
+\sim \mathcal{N}(\mathbf\mu,
+\mathbf{\Sigma})\)</span>，需要对其均值和协方差做变换。均值的变换比较好做，对分布作<span
+class="math inline">\(X_0+\mathbf{\mu}\)</span>加减可以直接反应到均值上，但是对协方差不能再简单的乘一个变换系数了，因为单位向量乘以任何系数只会变成对角矩阵，而不能表示任意实对称矩阵。</p>
+<p>由式3可知，<span class="math inline">\(X&#39;=TX, \Sigma&#39;=T\Sigma
+T^T\)</span>，所以我们只需要对任意协方差矩阵做对角化即可知道该对标准正态分布做什么变换<span
+class="math inline">\(T\)</span>。对<span
+class="math inline">\(\Sigma\)</span>进行对角化， <span
+class="math display">\[
+\Sigma = U\Lambda U^{-1}
+\]</span> 其中<span
+class="math inline">\(\Lambda\)</span>为其特征值矩阵，<span
+class="math inline">\(U\)</span>为对应的单位特征向量的列组成的矩阵其可以进一步写成一个放缩矩阵乘以一个旋转矩阵，即<span
+class="math inline">\(T=RS\)</span>。 <span class="math display">\[
+\Sigma = U\Lambda U^{-1} = (RS)(RS)^T
+\]</span>
+这是由于<strong>协方差矩阵是半正定的实对称矩阵</strong>，因此有<span
+class="math inline">\(U^{-1}=U^T\)</span>，且<span
+class="math inline">\(|U|\ge0\)</span>，且<span
+class="math inline">\(U\)</span>为正交矩阵。行列式为1的正交矩阵可以表示为一个旋转矩阵，因此有
+<span class="math display">\[
+\Sigma = U\Lambda U^T = R \Lambda R^T=RS(SR)^T
+\]</span></p>
+<p>因此，<strong>任意正态分布可以看作对一个标准正态分布先进行放缩，然后再进行旋转，最后移动到均值处得到。</strong>即
+<span class="math display">\[
+X = RSX_0+\mu
+\]</span></p>
+<blockquote>
+<p>正交矩阵可以分为两类，一类就是旋转变换矩阵，一类是镜像变换矩阵</p>
+</blockquote>
+<h3 id="几何理解">几何理解</h3>
+<p>从图形的角度也可以得到这个结果，对于二元标准正态分布而言，它的图像如下：</p>
+<figure>
+<img src="../../../source/imgs/$%7Bfiilename%7D/whiteneddata.png"
+alt="whiteneddata" />
+<figcaption aria-hidden="true">whiteneddata</figcaption>
+</figure>
+<p>当把协方差矩阵从单位矩阵变成对角矩阵时相当于对其两侧(x轴和y轴)方向进行了拉伸：</p>
+<figure>
+<img src="../imgs/$%7Bfiilename%7D/eigenvectors-5595319.png"
+alt="eigenvectors" />
+<figcaption aria-hidden="true">eigenvectors</figcaption>
+</figure>
+<p>下图为协方差矩阵为<span class="math inline">\(\left[ \begin{matrix} 5
+&amp; 4 \\ 4 &amp; 6 \end{matrix}
+\right]\)</span>的二元正态分布样本图，直观上来看我们只需要进一步对上述的协方差矩阵为对角矩阵的正态分布样本进行一个旋转操作就可以表示任意的二元正态分布了。</p>
+<figure>
+<img src="../imgs/$%7Bfiilename%7D/transformeddata-5595343.png"
+alt="transformeddata" />
+<figcaption aria-hidden="true">transformeddata</figcaption>
+</figure>
+<h3 id="矩阵论拾遗">矩阵论拾遗</h3>
+<blockquote>
+<p>实对称矩阵:如果有n阶矩阵A，其矩阵元素都是实数，且矩阵A的转置等于其本身，即<span
+class="math inline">\(A^T=A\)</span>，则矩阵A为实对称矩阵</p>
+</blockquote>
+<blockquote>
+<p>正交矩阵：如果有n阶矩阵A，其行向量和列向量皆是相互正交的单位向量，则A为正交矩阵，此时有<span
+class="math inline">\(A^{-1}=A^T\)</span></p>
+</blockquote>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>皆有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<blockquote>
+<p>实对称矩阵的特征向量相互正交</p>
+</blockquote>
+<p>证明： <span class="math display">\[
+给定一个n维实对称矩阵A满足Ax_1=\lambda_1x_1,
+Ax_2=\lambda_2x_2,且\lambda_1\not=\lambda \\
+对于
+Ax_1=\lambda_1x_1,两边转置有x_1^TA^T=\lambda_1x_1^T，两侧都右乘x_2，得到
+\\
+x_1^TA^Tx_2=\lambda_1x_1^Tx_2,由于A^T=A，得到 \\
+\lambda_2x_1^Tx_2=\lambda_1x_1^Tx_2 \\
+由于\lambda_1 \not= \lambda_2 所以得到x_1^Tx_2=0，故得证
+\]</span></p>
+<p><strong>性质：协方差矩阵为半正定矩阵</strong></p>
+<blockquote>
+<p>半正定矩阵：如果有n阶矩阵A，对于任意非零向量<span
+class="math inline">\(x\)</span>有<span
+class="math inline">\(xAx^T\ge0\)</span>，则A为半正定矩阵</p>
+</blockquote>
+<p>协方差矩阵定义： <span class="math display">\[
+\Sigma = E[(x-E(x))(x-E(x))^T]
+\]</span> 对任意非零向量<span class="math inline">\(u\in R^{1 \times
+n}\)</span>： <span class="math display">\[
+u\Sigma u^T = uE[(x-E(x))(x-E(x))^T]u^T \\=E[u(x-E(x))(x-E(x))^Tu^T]
+\\=E[u(x-E(x))[u(x-E(x))]^T) \\ =E(X&#39;X&#39;^T) \ge 0
+\]</span></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/15/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E4%BB%BB%E6%84%8F%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83"><span class="nav-number">1.</span> <span class="nav-text">学习任意高斯分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E5%8F%AF%E4%BB%A5%E7%94%B1%E6%A0%87%E5%87%86%E6%AD%A3%E6%80%81%E5%88%86%E5%B8%83%E5%8F%98%E6%8D%A2%E8%80%8C%E6%9D%A5"><span class="nav-number">3.</span> <span class="nav-text">正态分布可以由标准正态分布变换而来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E7%90%86%E8%A7%A3"><span class="nav-number">4.</span> <span class="nav-text">几何理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5%E8%AE%BA%E6%8B%BE%E9%81%97"><span class="nav-number">5.</span> <span class="nav-text">矩阵论拾遗</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="BigK"
+      src="/uploads/IMG_8485.jpg">
+  <p class="site-author-name" itemprop="name">BigK</p>
+  <div class="site-description" itemprop="description">The world is not a fine place, but worth the fighting for</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">BigK</span>
+</div>
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'o7p9Dib4M1TG87DZSo7a3l8K-gzGzoHsz',
+      appKey     : 'pp3zmuhp6OO8Sy8n9xptgx4M',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
