@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://example.com/2024/01/19/imgs/$%7Bfiilename%7D/eigenvectors-5595319.png">
 <meta property="og:image" content="http://example.com/2024/01/19/imgs/$%7Bfiilename%7D/transformeddata-5595343.png">
 <meta property="article:published_time" content="2024-01-18T16:25:21.000Z">
-<meta property="article:modified_time" content="2024-01-18T16:32:31.381Z">
+<meta property="article:modified_time" content="2024-01-18T16:32:31.000Z">
 <meta property="article:author" content="BigK">
 <meta property="article:tag" content="Junwei Zha">
 <meta name="twitter:card" content="summary">
@@ -327,11 +327,14 @@ X = \sigma X_0 + \mu    \\
 \sigma = \sigma \mathbf{I}
 \]</span> 对于二元正态分布而言，标准正态分布是指均值<span
 class="math inline">\(\mu=[0, 0]^T\)</span>，协方差为<span
-class="math inline">\(\Sigma = \left[ \begin{matrix} 1 &amp; 0 \\ 0
-&amp; 1 \end{matrix} \right]\)</span> 即，即<span
-class="math inline">\(X_0 \sim \mathcal{N}(\mathbf{0},
-\mathbf{I})\)</span>。要得到任意正态分布<span class="math inline">\(X
-\sim \mathcal{N}(\mathbf\mu,
+class="math inline">\(\Sigma = \left[
+\begin{matrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{matrix}
+\right]\)</span> 即，即<span class="math inline">\(X_0 \sim
+\mathcal{N}(\mathbf{0}, \mathbf{I})\)</span>。要得到任意正态分布<span
+class="math inline">\(X \sim \mathcal{N}(\mathbf\mu,
 \mathbf{\Sigma})\)</span>，需要对其均值和协方差做变换。均值的变换比较好做，对分布作<span
 class="math inline">\(X_0+\mathbf{\mu}\)</span>加减可以直接反应到均值上，但是对协方差不能再简单的乘一个变换系数了，因为单位向量乘以任何系数只会变成对角矩阵，而不能表示任意实对称矩阵。</p>
 <p>由式3可知，<span class="math inline">\(X&#39;=TX, \Sigma&#39;=T\Sigma
@@ -373,8 +376,11 @@ alt="whiteneddata" />
 alt="eigenvectors" />
 <figcaption aria-hidden="true">eigenvectors</figcaption>
 </figure>
-<p>下图为协方差矩阵为<span class="math inline">\(\left[ \begin{matrix} 5
-&amp; 4 \\ 4 &amp; 6 \end{matrix}
+<p>下图为协方差矩阵为<span class="math inline">\(\left[
+\begin{matrix}
+5 &amp; 4 \\
+4 &amp; 6
+\end{matrix}
 \right]\)</span>的二元正态分布样本图，直观上来看我们只需要进一步对上述的协方差矩阵为对角矩阵的正态分布样本进行一个旋转操作就可以表示任意的二元正态分布了。</p>
 <figure>
 <img src="../imgs/$%7Bfiilename%7D/transformeddata-5595343.png"
@@ -439,7 +445,10 @@ u\Sigma u^T = uE[(x-E(x))(x-E(x))^T]u^T \\=E[u(x-E(x))(x-E(x))^Tu^T]
     <a href="/2024/01/18/mac%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5linux%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%A8%8B%E5%BA%8F/" rel="prev" title="mac远程连接linux图形化程序">
       <i class="fa fa-chevron-left"></i> mac远程连接linux图形化程序
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/02/06/3D-gaussian-splatting%E4%B8%AD%E7%9A%84%E5%9D%90%E6%A0%87%E7%B3%BB/" rel="next" title="3D gaussian splatting中的坐标系">
+      3D gaussian splatting中的坐标系 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -515,7 +524,7 @@ u\Sigma u^T = uE[(x-E(x))(x-E(x))^T]u^T \\=E[u(x-E(x))(x-E(x))^Tu^T]
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -22,16 +22,23 @@
 
   <meta name="description" content="“The sculpture is already complete within the marble block, before I start my work. It is already there. I just have to chisel away the superfluous material.” I&#39;d heard Michelangelo&#39;s famous quote be">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Diffusion Model">
+<meta property="og:title" content="Diffusion Model DDPM">
 <meta property="og:url" content="http://example.com/2023/08/16/Diffusion-Model/index.html">
 <meta property="og:site_name" content="来者可追">
 <meta property="og:description" content="“The sculpture is already complete within the marble block, before I start my work. It is already there. I just have to chisel away the superfluous material.” I&#39;d heard Michelangelo&#39;s famous quote be">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419142417234.png">
+<meta property="og:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419142800065.png">
+<meta property="og:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419143133030.png">
+<meta property="og:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419161923629.png">
+<meta property="og:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419165444510.png">
+<meta property="og:image" content="http://example.com/2023/08/source/imgs/$%7Bfiilename%7D/image-20240522151849528.png">
 <meta property="article:published_time" content="2023-08-16T07:13:45.000Z">
-<meta property="article:modified_time" content="2023-08-16T07:13:58.244Z">
+<meta property="article:modified_time" content="2024-07-10T16:13:57.763Z">
 <meta property="article:author" content="BigK">
 <meta property="article:tag" content="Junwei Zha">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240419142417234.png">
 
 <link rel="canonical" href="http://example.com/2023/08/16/Diffusion-Model/">
 
@@ -46,7 +53,7 @@
   };
 </script>
 
-  <title>Diffusion Model | 来者可追</title>
+  <title>Diffusion Model DDPM | 来者可追</title>
   
 
 
@@ -193,7 +200,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Diffusion Model
+          Diffusion Model DDPM
         </h1>
 
         <div class="post-meta">
@@ -202,10 +209,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-08-16 15:13:45 / 修改时间：15:13:58" itemprop="dateCreated datePublished" datetime="2023-08-16T15:13:45+08:00">2023-08-16</time>
+              <time title="创建时间：2023-08-16 15:13:45" itemprop="dateCreated datePublished" datetime="2023-08-16T15:13:45+08:00">2023-08-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-11 00:13:57" itemprop="dateModified" datetime="2024-07-11T00:13:57+08:00">2024-07-11</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -245,6 +258,192 @@ start my work. <strong>It is already there.</strong> <strong>I just have
 to chisel away the superfluous material</strong>.” I'd heard
 Michelangelo's famous quote before. - <strong>Michelangelo</strong></p>
 </blockquote>
+<h3 id="生成式网络模型">生成式网络模型</h3>
+<p><img src="/Users/zhajunwei/Documents/source/imgs/${fiilename}/image-20240419142417234.png" alt="image-20240419142417234" style="zoom:25%;" /></p>
+<p>从高斯分布中采样一个噪声<span class="math inline">\(z \sim
+\mathcal{N}(\mathbf{\mu},
+\mathbf{\Sigma})\)</span>，我们希望它输入到一个网络<span
+class="math inline">\(G\)</span>之后可以输出图像x，大量的{x}可以组成一个分布，我们希望分布{x}可以与真实图像分布相近。对于文生图任务而言，只是在这个基础上加了一个condition，其本质过程和普通的生成式任务没有差别。</p>
+<p><img src="/Users/zhajunwei/Documents/source/imgs/${fiilename}/image-20240419142800065.png" alt="image-20240419142800065" style="zoom:25%;" /></p>
+<p>训练Network得到最优网络参数<span
+class="math inline">\(\theta\)</span>的过程可以看作是最大似然估计:</p>
+<p><img src="/Users/zhajunwei/Documents/source/imgs/${fiilename}/image-20240419143133030.png" alt="image-20240419143133030" style="zoom:25%;" /></p>
+<p>首先，训练数据采样自真实数据，<span class="math inline">\(x^i\sim
+P_{data}(x)\)</span>，我们在训练过程中希望监督信息是<span
+class="math inline">\(x^i\)</span>时，网络生成结果输出<span
+class="math inline">\(x^i\)</span>的概率越大越好，此时网络参数最优即:
+<span class="math display">\[
+\theta ^{*}=arg \max_{\theta}\prod_{i=1}^mP_{\theta}(x^i)
+\]</span></p>
+<h6 id="最大似然最小kl散度">最大似然==最小KL散度</h6>
+<p>为什么最大似然估计的结果就是我们想要的结果呢？此时的<span
+class="math inline">\(P_{\theta^*}(x)\)</span>与<span
+class="math inline">\(P_{data}(x)\)</span>相近吗？答案是肯定的，<strong>最大似然等同于最小KL散度</strong>。</p>
+<p><img src="/Users/zhajunwei/Documents/source/imgs/${fiilename}/image-20240419161923629.png" alt="image-20240419161923629" style="zoom:25%;" /></p>
+<blockquote>
+<p>概率论拾遗：假设对随机变量<span
+class="math inline">\(\xi\)</span>，存量两个概率分布P，Q。如果<span
+class="math inline">\(\xi\)</span>为离散随机变量，定义从P到Q的KL散度为：
+<span class="math display">\[
+KL(P||Q)=\sum_iP(i)ln\frac{P(i)}{Q(i)}
+\]</span> 如果<span
+class="math inline">\(\xi\)</span>为连续随机变量，则定义P到Q的KL散度为:
+<span class="math display">\[
+KL(P||Q)=\int_{-\infty}^{\infty}p(x)ln\frac{p(x)}{q(x)}dx
+\]</span></p>
+</blockquote>
+<h6 id="求解似然估计p_thetax">求解似然估计<span
+class="math inline">\(P_\theta(x)\)</span></h6>
+<p><img src="/Users/zhajunwei/Documents/source/imgs/${fiilename}/image-20240419165444510.png" alt="image-20240419165444510" style="zoom:25%;" /></p>
+<p>对于生成模型的网络输出为x的概率，即似然估计可以写成 <span
+class="math display">\[
+P_{\theta}(x)=\int_z P(z)P_\theta(x|z)dz
+\]</span> 其中<span class="math inline">\(P(z)\)</span>是生成噪声<span
+class="math inline">\(z\)</span>的概率，<span
+class="math inline">\(P_{\theta}(x|z)\)</span>是将采样得到的噪声<span
+class="math inline">\(z\)</span>输入到网络后得到结果x的概率。为什么还要积分呢？这是由于两种不同的噪声可能都可以产生结果x，即可能存在<span
+class="math inline">\(x=G(z_1)=G(z_2)\)</span>，所以需要考虑所有的<span
+class="math inline">\(z\)</span>的可能性。那么现在如何定义<span
+class="math inline">\(P_\theta(x|z)\)</span>呢？有种直观的定义是二值离散定义：
+<span class="math display">\[
+P_{\theta}(x|z)=\begin{cases}
+1, G(z) =x \\
+0, G(z) \neq x
+\end{cases}
+\]</span> 但这种定义太严格了，几乎很难出现两张图完全相同的情况即<span
+class="math inline">\(G(z)==x\)</span>，所以需要对这个概率做一些松弛。实际上按照高斯距离来衡量网络输出的图像与真值图像之间的差异，并作为网络的条件概率。
+<span class="math display">\[
+P_{\theta}(x|z)\propto e^{-||G(z)-x||_2}
+\]</span> 然而， 事实上直接最大化<span
+class="math inline">\(P_{\theta}(x)\)</span>是很难的，实际上我们是最大化它的下界：
+<span class="math display">\[
+logP_{\theta}(x)=\int_zq(z|x)logP_{\theta}(x)dz
+\]</span> 这里的等式对于任意分布<span
+class="math inline">\(q(z|x)\)</span>都是成立的，因为<span
+class="math inline">\(\int_zq(z|x)logdz\)</span>其实和<span
+class="math inline">\(P_{\theta}(x)\)</span>相互独立。接下来可以得到
+<span class="math display">\[
+logP_{\theta}(x)\geq \int_zq(z|x)log(\frac{P_{\theta}(z, x)}{q(z|x)})dz
+\\
+=E_{q(z|x)}[log(\frac{P_{\theta}(x, z)}{q(z|x)})]
+\]</span> 其中<span
+class="math inline">\(q(z|x)\)</span>​是指给定干净图像x的情况下输出随机噪声z的概率，从功能上来说它就是VAE中的Encoder。对DDPM来说是一样的，<strong>最大化似然函数等价于最大化KL散度的下界。</strong>
+<span class="math display">\[
+logP_{\theta}(x_0) \rightarrow
+E_{q(x_1:x_t|x_0)}[log(\frac{P(x_0:x_T)}{q(x_1:x_T|x_0)})]
+\]</span></p>
+<h3 id="概率角度">概率角度</h3>
+<figure>
+<img
+src="/Users/zhajunwei/Documents/source/imgs/$%7Bfiilename%7D/image-20240522110238017.png"
+alt="image-20240522110238017" />
+<figcaption aria-hidden="true">image-20240522110238017</figcaption>
+</figure>
+<p>DDPM的前向和逆向过程可以看作是马尔可夫过程，逆向过程相当于求一个概率分布，为什么实际U-net的输出是一个噪音呢？这是重参化的结果。
+<span class="math display">\[
+p(x_{t-1}|x_t)
+\]</span> 根据贝叶斯公式，上式可以写为 <span class="math display">\[
+p(x_{t-1}|x_t)=\frac{p(x_t|x_{t-1})p(x_{t-1})}{p(x_t)}
+\]</span> 如果给定<span
+class="math inline">\(x_0\)</span>则上式可以表示为 <span
+class="math display">\[
+p(x_{t-1}|x_t, x_0) = \frac{p(x_t|x_{t-1},
+x_0)p(x_{t-1}|x_0)}{p(x_t|x_0)}
+\]</span></p>
+<h4 id="增噪过程">增噪过程</h4>
+<p><span class="math display">\[
+x_t = \sqrt{\alpha_t}x_{t-1}+\sqrt{\beta_t}\epsilon_t
+\]</span></p>
+<p>其中<span class="math inline">\(\epsilon_t \sim \mathcal{N}(0,
+1)\)</span>，所以<span class="math inline">\(\sqrt{\beta_t}\epsilon_t
+\sim \mathcal{N}(0, \beta_t)\)</span>，所以<span
+class="math inline">\(\beta_t\)</span>的本质是<strong>增噪过程的噪声方差</strong>，由于<span
+class="math inline">\(\alpha_t=1-\beta_t\)</span>，所以<strong>增噪过程中仅有<span
+class="math inline">\(\beta\)</span>这一个人工设置的参数</strong>。由于<span
+class="math inline">\(x_{t-1}\)</span>为一个给定值，所以 <span
+class="math display">\[
+p(x_t|x_{t-1}) \sim \mathcal{N}(\sqrt{\alpha_t}x_{t-1}, \beta_t)
+\]</span> 可以根据递推公式<span class="math inline">\(x_t =
+\sqrt{\alpha_t}x_{t-1}+\sqrt{\beta_t}\epsilon_t\)</span>得到通项公式
+<span class="math display">\[
+x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon
+\]</span> 由于<span class="math inline">\(\epsilon \sim \mathcal{N}(0,
+1)\)</span>，所以有<span class="math inline">\(x_t \sim
+\mathcal{N}(\sqrt{\bar{\alpha_t}}x_0,
+1-\bar{\alpha_t})\)</span>，即在给定<span
+class="math inline">\(x_0\)</span>的情况下<span
+class="math inline">\(x_t\)</span>服从高斯分布 <span
+class="math display">\[
+p(x_t|x_0)\sim \mathcal{N}(\sqrt{\bar{\alpha_t}}x_0, 1-\bar{\alpha_t})
+\]</span> 我们此时再来看公式(12)，其中 <span
+class="math inline">\(p(x_t|x_{t-1},
+x_0)\)</span><strong>由于是个马尔可夫过程所以</strong><span
+class="math inline">\(p(x_t|x_{t-1},
+x_0)=p(x_t|x_{t-1})\)</span>，而<span
+class="math inline">\(p(x_t|x_{t-1}) \sim
+\mathcal{N}(\sqrt{\alpha_t}x_{t-1}, \beta_t)\)</span>，其中<span
+class="math inline">\(p(x_t|x_0)\sim
+\mathcal{N}(\sqrt{\bar{\alpha_t}}x_0,
+1-\bar{\alpha_t})\)</span>，同样的<span
+class="math inline">\(p(x_{t-1}|x_0)\sim
+\mathcal{N}(\sqrt{\bar{\alpha}_{t-1}}x_0,
+1-\bar{\alpha}_{t-1})\)</span>。所以有 <span class="math display">\[
+p(x_{t-1}|x_t, x_0) \sim \frac{\mathcal{N}(x_t;\sqrt{\alpha_t}x_{t-1},
+\beta_t)\mathcal{N}(x_{t-1};\sqrt{\bar{\alpha}_{t-1}}x_0,
+1-\bar{\alpha}_{t-1})}{\mathcal{N}(x_t;\sqrt{\bar{\alpha_t}}x_0,
+1-\bar{\alpha}_t)}
+\]</span> 这里省去冗杂的推导过程，可以得到此时<span
+class="math inline">\(p(x_{t-1}|x_t,
+x_0)\)</span>依然服从一个高斯分布<span
+class="math inline">\(\mathcal{N}(\mu_q(x_t, x_0),
+\sum_q(t))\)</span></p>
+<p><img src="../../source/imgs/${fiilename}/image-20240522151849528.png" alt="image-20240522151849528" style="zoom: 50%;" /></p>
+<p>即 <span class="math display">\[
+q(x_{t-1}|x_t, x_0)\sim \mathcal{N}(\mu(x_0, x_t), \sum(t))
+\]</span></p>
+<blockquote>
+<p>符号标记：<span
+class="math inline">\(\alpha_t=1-\beta_t，\bar\alpha_t=\Pi_{s=1}^t\alpha_s\)</span>
+其中<span class="math inline">\(\beta_t\)</span>为增加的噪声的方差;
+<span class="math inline">\(\mathcal{N}(x; 0,
+1)\)</span>表示随机变量<span
+class="math inline">\(x\)</span>服从高斯分布<span
+class="math inline">\(\mathcal{N}(0, 1)\)</span></p>
+</blockquote>
+<h4 id="去噪过程">去噪过程</h4>
+<p>去噪过程我们是不知道<span
+class="math inline">\(x_0\)</span>的，所以对于式(18)而言，未知的有<span
+class="math inline">\(\mu(x_0, x_t)\)</span>，而为了求<span
+class="math inline">\(\mu(x_0, x_t)\)</span>我们需要预估一个<span
+class="math inline">\(\hat{x}_0\)</span>，需要注意的是这里的<span
+class="math inline">\(\hat{x}_0\)</span>并非我们最终的标签<span
+class="math inline">\(x_0\)</span>。为了求<span
+class="math inline">\(\hat{x}_0\)</span>​，我们要利用公式 <span
+class="math display">\[
+x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon_t
+\]</span> 由于<span class="math inline">\(x_t\)</span>和<span
+class="math inline">\(\bar{\alpha}_t\)</span>已知，所以我们可以通过估计<span
+class="math inline">\(\epsilon_t\)</span>来得到预估的<span
+class="math inline">\(\hat{x_0}\)</span>，这也是为什么U-net的输出为噪声<span
+class="math inline">\(\epsilon_{\theta}(x_t,
+t)\)</span>。这样我们就可以求得式（18）中的均值<span
+class="math inline">\(\mu(\hat{x_0}, x_t)\)</span>： <span
+class="math display">\[
+x_{t-1} \sim
+\mathcal{N}(\frac{1}{\sqrt{\alpha_t}}(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha_t}}\epsilon_{\theta}(x_t,
+t)}), \sum(t))
+\]</span> 由于我们知道了给定<span
+class="math inline">\(x_t\)</span>时，<span
+class="math inline">\(x_{t-1}\)</span>的分布，我们就可以采样一个<span
+class="math inline">\(x_{t-1}\)</span>出来，<strong>如何进行采样呢？方法是重参化</strong>，我们先采样一个高斯噪声<span
+class="math inline">\(z\sim \mathcal{N}(0,
+1)\)</span>，再让它乘以我们已知的方差<span
+class="math inline">\(\sum(t)\)</span>再加上我们已知的均值，即可采样得到一个<span
+class="math inline">\(x_{t-1}\)</span>​ <span class="math display">\[
+x_{t-1}
+=\frac{1}{\sqrt{\alpha_t}}(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha_t}}\epsilon_{\theta}(x_t,
+t)})+\sqrt\sum(t)z
+\]</span></p>
 
     </div>
 
@@ -326,6 +525,7 @@ Michelangelo's famous quote before. - <strong>Michelangelo</strong></p>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%BC%8F%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">生成式网络模型</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E6%9C%80%E5%B0%8Fkl%E6%95%A3%E5%BA%A6"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">最大似然&#x3D;&#x3D;最小KL散度</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B1%82%E8%A7%A3%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1p_thetax"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">求解似然估计\(P_\theta(x)\)</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E8%A7%92%E5%BA%A6"><span class="nav-number">2.</span> <span class="nav-text">概率角度</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E5%99%AA%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">增噪过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%BB%E5%99%AA%E8%BF%87%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">去噪过程</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -341,7 +541,7 @@ Michelangelo's famous quote before. - <strong>Michelangelo</strong></p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
